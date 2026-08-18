@@ -1,0 +1,794 @@
+---
+title: "fatigue_22_june_2026"
+output: html_document
+date: "2026-06-22"
+---
+
+```{r}
+library(tidyverse)
+library(psych)
+library(knitr)
+library(kableExtra)
+library(car)
+library(reshape2)
+library(gridExtra)
+
+
+# 1. LOAD DATA & BASIC CLEANING
+
+
+data <- read.csv("/Users/devyn/Downloads/listening-fatigue-research/Data/FatigueDdata.csv")
+cat("Dataset dimensions:", dim(data)[1], "rows and", dim(data)[2], "columns\n")
+
+data_clean <- data %>%
+  mutate(across(where(is.numeric), ~ na_if(., -1)))
+
+check_columns <- function(data, pattern) {
+  cols        <- grep(pattern, names(data), value = TRUE)
+  non_numeric <- sapply(data[cols], function(x) !is.numeric(x))
+  if (any(non_numeric)) {
+    for (col in cols[non_numeric])
+      data[[col]] <- as.numeric(as.character(data[[col]]))
+  }
+  data
+}
+
+data_clean <- check_columns(data_clean, "^vfs10_")
+data_clean <- check_columns(data_clean, "^fat")
+data_clean <- check_columns(data_clean, "^comm")
+
+
+# 2. OUTCOME SCORES
+
+
+safe_row_sum <- function(df) {
+  m         <- as.matrix(df)
+  n_nonmiss <- rowSums(!is.na(m))
+  s         <- rowSums(m, na.rm = TRUE)
+  s[n_nonmiss == 0] <- NA
+  s
+}
+
+data_clean <- data_clean %>%
+  mutate(
+    vfs_total     = safe_row_sum(select(., starts_with("vfs10_"))),
+    fatigue_total = safe_row_sum(
+      select(., starts_with("fat")) %>%
+        select(-matches("fatimp"), -matches("fatexp26"))
+    ),
+    comm_total    = safe_row_sum(
+      select(., starts_with("comm")) %>%
+        select(-matches("comm_complete"))
+    )
+  )
+
+cat("\nSummary of outcome variables:\n")
+print(summary(data_clean[, c("vfs_total", "fatigue_total", "comm_total")]))
+
+
+# 3. LANGUAGE COMPOSITES & RELIABILITY
+
+
+create_composite_with_alpha <- function(data, vars, name) {
+  existing_vars <- vars[vars %in% names(data)]
+  missing_vars  <- setdiff(vars, existing_vars)
+  if (length(missing_vars) > 0)
+    cat("Warning: Missing vars for", name, ":", paste(missing_vars, collapse = ", "), "\n")
+  if (length(existing_vars) < 2) {
+    cat("Error: Need ≥2 variables for", name, "\n")
+    return(list(composite = rep(NA_real_, nrow(data)), alpha = NA_real_))
+  }
+  subset_data  <- data[, existing_vars, drop = FALSE]
+  alpha_result <- psych::alpha(subset_data, check.keys = TRUE)
+  composite    <- rowMeans(subset_data, na.rm = TRUE)
+  composite[is.nan(composite)] <- NA
+  cat("Cronbach's alpha for", name, ":", round(alpha_result$total$std.alpha, 3), "\n")
+  list(composite = composite, alpha = alpha_result$total$std.alpha)
+}
+
+asl_usage_vars     <- c("perc_asl_family", "perc_asl_friends", "perc_asl_work",
+                         "perc_asl_count", "perc_asl_selftalk")
+english_usage_vars <- c("perc_eng_family", "perc_eng_friends", "perc_eng_work",
+                         "perc_eng_count", "perc_eng_selftalk")
+asl_prof_vars      <- c("langprof_aslcomp_v2", "langprof_aslprod_v2")
+english_prof_vars  <- c("langprof_engread_v2", "langprof_engwrite_v2",
+                         "langprof_engcomp_v2", "langprof_engprod_v2")
+
+for (col in c(asl_usage_vars, english_usage_vars, asl_prof_vars, english_prof_vars)) {
+  if (col %in% names(data_clean) && !is.numeric(data_clean[[col]]))
+    data_clean[[col]] <- as.numeric(as.character(data_clean[[col]]))
+}
+
+cat("\n CRONBACH'S ALPHA RELIABILITY \n")
+asl_usage_result     <- create_composite_with_alpha(data_clean, asl_usage_vars,     "ASL Usage")
+english_usage_result <- create_composite_with_alpha(data_clean, english_usage_vars, "English Usage")
+asl_prof_result      <- create_composite_with_alpha(data_clean, asl_prof_vars,      "ASL Proficiency")
+english_prof_result  <- create_composite_with_alpha(data_clean, english_prof_vars,  "English Proficiency")
+
+data_clean <- data_clean %>%
+  mutate(
+    asl_usage           = asl_usage_result$composite,
+    english_usage       = english_usage_result$composite,
+    asl_proficiency     = asl_prof_result$composite,
+    english_proficiency = english_prof_result$composite
+  )
+
+alpha_values <- tibble(
+  Construct      = c("ASL Usage", "English Usage", "ASL Proficiency", "English Proficiency"),
+  Cronbach_Alpha = c(asl_usage_result$alpha, english_usage_result$alpha,
+                     asl_prof_result$alpha,  english_prof_result$alpha)
+)
+
+
+# 4. DEMOGRAPHIC & AUDITORY COVARIATES
+
+
+if ("age" %in% names(data_clean)) {
+  data_clean$age <- as.numeric(data_clean$age)
+} else cat("Warning: age not found\n")
+
+if ("langhist_aoa_asl" %in% names(data_clean)) {
+  data_clean <- data_clean %>%
+    mutate(
+      langhist_aoa_asl   = as.numeric(langhist_aoa_asl),
+      asl_exposure_group = case_when(
+        langhist_aoa_asl == -1 | is.na(langhist_aoa_asl) ~ "no_asl",
+        langhist_aoa_asl %in% 0:6 ~ "early",
+        langhist_aoa_asl %in% 7:8 ~ "late",
+        TRUE ~ NA_character_
+      ),
+      asl_exposure_group = factor(
+        asl_exposure_group,
+        levels = c("no_asl", "early", "late")
+      )
+    )
+  cat("\nASL exposure group distribution:\n")
+  print(table(data_clean$asl_exposure_group, useNA = "always"))
+} else cat("Warning: langhist_aoa_asl not found\n")
+
+# Education level (pre_college = reference)
+if ("educ_level" %in% names(data_clean)) {
+  data_clean$educ_level <- as.numeric(data_clean$educ_level)
+  data_clean <- data_clean %>%
+    mutate(
+      educ_level_grouped = case_when(
+        educ_level %in% 2:4 ~ "pre_college",
+        educ_level %in% 5:7 ~ "college_plus",
+        TRUE                ~ NA_character_
+      ),
+      educ_level_grouped = factor(educ_level_grouped,
+                                  levels = c("pre_college", "college_plus"))
+    )
+  cat("\nEducation distribution:\n")
+  print(table(data_clean$educ_level_grouped, useNA = "always"))
+} else cat("Warning: educ_level not found\n")
+
+# Lipreading frequency (minimal = reference)
+if ("lipreading" %in% names(data_clean)) {
+  data_clean$lipreading <- as.numeric(data_clean$lipreading)
+  data_clean <- data_clean %>%
+    mutate(
+      lipreading_grouped = case_when(
+        lipreading %in% 0:1 ~ "never_rarely",
+        lipreading == 2     ~ "sometimes",
+        lipreading == 3     ~ "always",
+        TRUE                ~ NA_character_
+      ),
+      lipreading_grouped = factor(lipreading_grouped,
+                                  levels = c("never_rarely", "sometimes", "always"))
+    )
+  cat("\nLipreading distribution:\n")
+  print(table(data_clean$lipreading_grouped, useNA = "always"))
+} else cat("Warning: lipreading not found\n")
+
+# Self-perceived listening ability
+data_clean$hearing_level_self  <- NA_real_
+data_clean$hearing_level_aided <- NA_real_
+
+hearing_self_vars  <- paste0("hear_level_self___",       0:6)
+hearing_aided_vars <- paste0("hear_level_aided_self___", 0:6)
+
+existing_hearing_self  <- hearing_self_vars[hearing_self_vars   %in% names(data_clean)]
+existing_hearing_aided <- hearing_aided_vars[hearing_aided_vars %in% names(data_clean)]
+
+if (length(existing_hearing_self) > 0) {
+  for (var in existing_hearing_self)
+    data_clean[[var]] <- as.numeric(data_clean[[var]])
+  data_clean$hearing_level_self <- apply(
+    data_clean[existing_hearing_self], 1,
+    function(x) {
+      e <- which(x == 1)
+      if (length(e) == 0) NA_real_
+      else max(as.numeric(gsub(".*___", "", names(x)[e])))
+    }
+  )
+}
+
+if (length(existing_hearing_aided) > 0) {
+  for (var in existing_hearing_aided)
+    data_clean[[var]] <- as.numeric(data_clean[[var]])
+  data_clean$hearing_level_aided <- apply(
+    data_clean[existing_hearing_aided], 1,
+    function(x) {
+      e <- which(x == 1)
+      if (length(e) == 0) NA_real_
+      else max(as.numeric(gsub(".*___", "", names(x)[e])))
+    }
+  )
+}
+
+data_clean <- data_clean %>%
+  mutate(
+    self_perceived_listening_ability = pmax(hearing_level_self,
+                                            hearing_level_aided,
+                                            na.rm = TRUE),
+    self_perceived_listening_ability = ifelse(
+      is.infinite(self_perceived_listening_ability),
+      NA_real_,
+      self_perceived_listening_ability
+    )
+  )
+
+data_clean <- data_clean %>%
+  mutate(
+    speech_perception_cat = case_when(
+      is.na(self_perceived_listening_ability)       ~ NA_character_,
+      self_perceived_listening_ability == 0         ~ "none",
+      self_perceived_listening_ability == 1         ~ "minimal",
+      self_perceived_listening_ability >= 2         ~ "some_ability",
+      TRUE                                          ~ NA_character_
+    ),
+    speech_perception_cat = factor(
+      speech_perception_cat,
+      levels = c("none", "minimal", "some_ability")   # none = reference
+    )
+  )
+
+cat("\nSpeech perception category distribution:\n")
+print(table(data_clean$speech_perception_cat, useNA = "always"))
+
+
+# 5. NON-SIGNER ASL SCORE IMPUTATION
+
+# Non-signers (no_asl) have NA on ASL items because the survey did not
+# administer them. Their true ASL proficiency and usage is zero (known
+# value, not missing data). Setting to 0 retains them in all models and
+# allows dominance to be computed as (ASL - English).
+
+
+if ("asl_exposure_group" %in% names(data_clean)) {
+  no_asl_idx <- which(data_clean$asl_exposure_group == "no_asl")
+
+  n_prof_fixed <- sum(is.na(data_clean$asl_proficiency[no_asl_idx]))
+  n_usage_fixed <- sum(is.na(data_clean$asl_usage[no_asl_idx]))
+
+  data_clean$asl_proficiency[no_asl_idx] <- 0
+  data_clean$asl_usage[no_asl_idx]       <- 0
+
+  cat("\n NON-SIGNER ASL SCORE FIX \n")
+  cat(sprintf("Participants in no_asl group: %d\n", length(no_asl_idx)))
+  cat(sprintf("ASL proficiency set to 0: %d (were NA)\n", n_prof_fixed))
+  cat(sprintf("ASL usage set to 0:       %d (were NA)\n", n_usage_fixed))
+}
+
+
+# 6. DOMINANCE SCORES
+
+data_clean <- data_clean %>%
+  mutate(
+    dominance_proficiency = english_proficiency - asl_proficiency,
+    dominance_usage       = english_usage       - asl_usage
+  )
+if ("asl_exposure_group" %in% names(data_clean)) {
+  data_clean$dominance_proficiency[no_asl_idx] <- 100
+  data_clean$dominance_usage[no_asl_idx]       <- 100
+  cat(sprintf("Dominance set to 100 for %d non-signers\n", length(no_asl_idx)))
+}
+
+cat("\n=== DOMINANCE SCALE (positive = English-dominant) ===\n")
+print(summary(data_clean[, c("dominance_proficiency", "dominance_usage")]))
+
+
+# 7. CORRELATION MATRIX PLOT
+
+
+key_vars <- c("vfs_total", "fatigue_total", "comm_total",
+              "asl_proficiency", "asl_usage",
+              "english_proficiency", "english_usage",
+              "dominance_proficiency", "dominance_usage")
+
+existing_key_vars <- key_vars[key_vars %in% names(data_clean)]
+cor_data          <- data_clean[, existing_key_vars]
+cor_matrix        <- cor(cor_data, use = "pairwise.complete.obs")
+
+p_matrix <- matrix(NA, nrow = ncol(cor_data), ncol = ncol(cor_data))
+rownames(p_matrix) <- colnames(p_matrix) <- colnames(cor_data)
+for (i in seq_len(ncol(cor_data)))
+  for (j in seq_len(ncol(cor_data)))
+    p_matrix[i, j] <- if (i != j)
+      cor.test(cor_data[, i], cor_data[, j])$p.value else 0
+
+var_names <- c(
+  vfs_total             = "VFS Fatigue",
+  fatigue_total         = "General Fatigue",
+  comm_total            = "Communication Health",
+  asl_usage             = "ASL Usage",
+  english_usage         = "English Usage",
+  asl_proficiency       = "ASL Proficiency",
+  english_proficiency   = "English Proficiency",
+  dominance_proficiency = "Proficiency Dominance\n(+Eng-dom, \u2212ASL-dom)",
+  dominance_usage       = "Usage Dominance\n(+Eng-dom, \u2212ASL-dom)"
+)
+
+var_order   <- c("vfs_total", "fatigue_total", "comm_total",
+                 "asl_proficiency", "asl_usage",
+                 "english_proficiency", "english_usage",
+                 "dominance_proficiency", "dominance_usage")
+avail_order <- var_order[var_order %in% existing_key_vars]
+cor_m_ord   <- cor_matrix[avail_order, avail_order]
+p_m_ord     <- p_matrix[avail_order, avail_order]
+
+cor_long <- melt(cor_m_ord, varnames = c("Var1", "Var2"), value.name = "Correlation")
+p_long   <- melt(p_m_ord,   varnames = c("Var1", "Var2"), value.name = "P_Value")
+
+cor_p <- merge(cor_long, p_long, by = c("Var1", "Var2")) %>%
+  mutate(i1 = match(Var1, avail_order),
+         i2 = match(Var2, avail_order)) %>%
+  filter(i1 <= i2) %>%
+  mutate(
+    Var1_label = var_names[as.character(Var1)],
+    Var2_label = var_names[as.character(Var2)],
+    sig_level  = case_when(P_Value < .001 ~ "***",
+                           P_Value < .01  ~ "**",
+                           P_Value < .05  ~ "*",
+                           TRUE           ~ ""),
+    cor_label  = if_else(Var1 == Var2,
+                         sprintf("%.2f", Correlation),
+                         sprintf("%.2f\n%s", Correlation, sig_level))
+  )
+
+corr_plot <- ggplot(
+  cor_p,
+  aes(x = factor(Var1_label, levels = var_names[avail_order]),
+      y = factor(Var2_label, levels = rev(var_names[avail_order])))
+) +
+  geom_tile(aes(fill = Correlation), color = "white") +
+  geom_text(aes(label = cor_label), color = "black", size = 3, fontface = "bold", lineheight = 0.8) +
+  scale_fill_gradient2(low = "#2166AC", mid = "white", high = "#B2182B",
+                       midpoint = 0, limit = c(-1, 1), name = "Correlation\nCoefficient") +
+  labs(title    = "Correlation Matrix with Significance Levels",
+       subtitle = "* p < .05   ** p < .01   *** p < .001",
+       x = NULL, y = NULL,
+  caption = "Dominance: Positive = English Dominant, Negative = ASL Dominant") +
+  theme_minimal() +
+  theme(axis.text.x   = element_text(angle = 45, hjust = 1, size = 11),
+        axis.text.y   = element_text(size = 11),
+        plot.title    = element_text(size = 16, hjust = .5, face = "bold"),
+        plot.subtitle = element_text(size = 12, hjust = .5),
+        panel.grid    = element_blank()) +
+  coord_fixed()
+
+print(corr_plot)
+ggsave("correlation_matrix.png", corr_plot, width = 12, height = 10, dpi = 300, bg = "white")
+
+
+# 8. PER-TABLE COMPLETE-CASE DATASETS 
+
+# Table 2 sample: complete on all Model 3 vars + ALL 3 outcomes
+# Table 3 sample: complete on BOTH dominance vars + covariates + ALL 3 outcomes
+# Within each table, all models use identical N.
+
+
+base_covariates <- character(0)
+for (v in c("age", "asl_exposure_group", "educ_level_grouped",
+            "lipreading_grouped", "speech_perception_cat"))
+  if (v %in% names(data_clean)) base_covariates <- c(base_covariates, v)
+
+cat("\nCovariates included:", paste(base_covariates, collapse = ", "), "\n")
+
+outcomes       <- c("vfs_total", "fatigue_total", "comm_total")
+outcome_labels <- c("Listening Fatigue", "General Fatigue", "Communication Health")
+
+# Table 2 dataset (Model 3: four individual language vars + covariates)
+vars_table2 <- unique(c(
+  outcomes,
+  "asl_proficiency", "english_proficiency",
+  "asl_usage", "english_usage",
+  base_covariates
+))
+vars_table2 <- vars_table2[vars_table2 %in% names(data_clean)]
+
+analysis_table2 <- data_clean %>%
+  select(all_of(vars_table2)) %>%
+  drop_na()
+
+cat(sprintf("\nComplete-case N for Table 2 (Model 3): %d\n", nrow(analysis_table2)))
+
+# Table 3 dataset (Models 1 & 2: both dominance vars + covariates)
+vars_table3 <- unique(c(
+  outcomes,
+  "dominance_proficiency", "dominance_usage",
+  base_covariates
+))
+vars_table3 <- vars_table3[vars_table3 %in% names(data_clean)]
+
+analysis_table3 <- data_clean %>%
+  select(all_of(vars_table3)) %>%
+  drop_na()
+
+cat(sprintf("Complete-case N for Table 3 (Models 1 & 2): %d\n", nrow(analysis_table3)))
+
+
+# 9. FIT ALL MODELS
+
+fit_model <- function(dat, dv, predictors) {
+  vars <- unique(c(dv, predictors))
+  vars <- vars[vars %in% names(dat)]
+  lm(as.formula(paste(dv, "~ .")), data = dat[, vars])
+}
+
+# Model 3: primary (on Table 2 dataset)
+predictors_m3 <- c("asl_proficiency", "english_proficiency",
+                    "asl_usage", "english_usage", base_covariates)
+predictors_m3 <- predictors_m3[predictors_m3 %in% names(analysis_table2)]
+
+models_m3 <- setNames(
+  lapply(outcomes, function(dv) fit_model(analysis_table2, dv, predictors_m3)),
+  outcome_labels
+)
+
+# Model 1: proficiency dominance (on Table 3 dataset)
+predictors_m1 <- c("dominance_proficiency", base_covariates)
+models_m1 <- setNames(
+  lapply(outcomes, function(dv) fit_model(analysis_table3, dv, predictors_m1)),
+  outcome_labels
+)
+
+# Model 2: usage dominance (on Table 3 dataset)
+predictors_m2 <- c("dominance_usage", base_covariates)
+models_m2 <- setNames(
+  lapply(outcomes, function(dv) fit_model(analysis_table3, dv, predictors_m2)),
+  outcome_labels
+)
+
+# Verify N consistency within each table
+n_t2 <- sapply(models_m3, nobs)
+n_t3_m1 <- sapply(models_m1, nobs)
+n_t3_m2 <- sapply(models_m2, nobs)
+cat("\nTable 2 Ns:", paste(n_t2, collapse = ", "),
+    "\nTable 3 Model 1 Ns:", paste(n_t3_m1, collapse = ", "),
+    "\nTable 3 Model 2 Ns:", paste(n_t3_m2, collapse = ", "), "\n")
+stopifnot(length(unique(n_t2)) == 1)
+stopifnot(all(n_t3_m1 == n_t3_m2))
+
+
+# 10. VIF DIAGNOSTICS
+
+cat("\n VIF DIAGNOSTICS: \n")
+all_model_sets <- list("Model 1" = models_m1,
+                       "Model 2" = models_m2,
+                       "Model 3" = models_m3)
+
+for (mname in names(all_model_sets)) {
+  for (lab in outcome_labels) {
+    cat("---", mname, "|", lab, "---\n")
+    tryCatch({
+      v      <- car::vif(all_model_sets[[mname]][[lab]])
+      maxvif <- if (is.matrix(v)) max(v[, "GVIF"]) else max(v)
+      print(round(if (is.matrix(v)) v else v, 2))
+      cat(sprintf("Max VIF: %.2f %s\n",
+                  maxvif,
+                  ifelse(maxvif > 10, "\u26A0 SEVERE",
+                         ifelse(maxvif > 5, "\u26A0 WARNING", "\u2713 OK"))))
+    }, error = function(e) cat("VIF error:", e$message, "\n"))
+  }
+}
+
+
+# 11. CELL FORMATTING — STANDARDIZED β
+
+# standardize_lm: z-scores DV + numeric predictors, refits model.
+# Factors untouched → their β = group diff in SD units of DV
+# (partially standardized; standard practice for mixed models).
+# t-stats and p-values are invariant to this transformation.
+
+
+standardize_lm <- function(m) {
+  mf <- model.frame(m)
+  dv <- names(mf)[1]
+  Xn <- names(mf)[-1]
+  mf[[dv]] <- as.numeric(scale(mf[[dv]]))
+  for (v in Xn)
+    if (is.numeric(mf[[v]])) mf[[v]] <- as.numeric(scale(mf[[v]]))
+  lm(formula(m), data = mf)
+}
+
+fmt_p <- function(p) {
+  if (is.na(p)) return("")
+  if (p < .001) return("< .001")
+  paste0("= ", sub("^0", "", sprintf("%.3f", p)))
+}
+
+fmt_cell <- function(model, term) {
+  s <- summary(model)$coefficients
+  if (!term %in% rownames(s)) return("\u2014")
+  B <- s[term, "Estimate"]
+  SE <- s[term, "Std. Error"]
+  p <- s[term, "Pr(>|t|)"]
+  paste0(sprintf("%.2f", B), " (", sprintf("%.2f", SE), ")")
+}
+
+fmt_r2 <- function(model) {
+  s <- summary(model)
+  sprintf("R\u00B2 = %.3f, adj. R\u00B2 = %.3f", s$r.squared, s$adj.r.squared)
+}
+
+fmt_f <- function(model) {
+  fs   <- summary(model)$fstatistic
+  Fval <- as.numeric(fs[1])
+  df1  <- as.numeric(fs[2])
+  df2  <- as.numeric(fs[3])
+  pval <- pf(Fval, df1, df2, lower.tail = FALSE)
+  p_fmt <- if (pval < .001) "< .001"
+           else sprintf("= %s", sub("^0", "", sprintf("%.3f", pval)))
+  sprintf("F(%d, %d) = %.2f, p %s", df1, df2, Fval, p_fmt)
+}
+
+
+fmt_cell_full <- function(model, term) {
+  s_raw <- summary(model)$coefficients
+  if (!term %in% rownames(s_raw)) return("\u2014")
+
+  B   <- s_raw[term, "Estimate"]
+  SE  <- s_raw[term, "Std. Error"]
+  p   <- s_raw[term, "Pr(>|t|)"]
+  ci  <- tryCatch(confint(model)[term, ], error = function(e) c(NA_real_, NA_real_))
+
+  m_std <- standardize_lm(model)
+  s_std <- summary(m_std)$coefficients
+  beta  <- if (term %in% rownames(s_std)) s_std[term, "Estimate"] else NA_real_
+
+  paste0(
+    "B = ",    sprintf("%.2f", B),
+    " [",      sprintf("%.2f", ci[1]), ", ", sprintf("%.2f", ci[2]), "]",
+    ", \u03B2 = ", sprintf("%.2f", beta),
+    ", SE = ", sprintf("%.2f", SE),
+    ", p ",    fmt_p(p)
+  )
+}
+
+# APPENDIX TABLE BUILDER
+
+build_appendix_table <- function(model_list, model_label, all_terms_named) {
+  tibble(Predictor = names(all_terms_named)) %>%
+    mutate(
+      `Listening Fatigue`    = map_chr(all_terms_named,
+                                       ~ fmt_cell_full(model_list[["Listening Fatigue"]], .x)),
+      `General Fatigue`      = map_chr(all_terms_named,
+                                       ~ fmt_cell_full(model_list[["General Fatigue"]], .x)),
+      `Communication Health` = map_chr(all_terms_named,
+                                       ~ fmt_cell_full(model_list[["Communication Health"]], .x))
+    ) %>%
+    bind_rows(
+      tibble(Predictor          = "Model R\u00B2",
+             `Listening Fatigue`    = fmt_r2(model_list[["Listening Fatigue"]]),
+             `General Fatigue`      = fmt_r2(model_list[["General Fatigue"]]),
+             `Communication Health` = fmt_r2(model_list[["Communication Health"]])),
+      tibble(Predictor          = "F-test",
+             `Listening Fatigue`    = fmt_f(model_list[["Listening Fatigue"]]),
+             `General Fatigue`      = fmt_f(model_list[["General Fatigue"]]),
+             `Communication Health` = fmt_f(model_list[["Communication Health"]])),
+      tibble(Predictor          = "N",
+             `Listening Fatigue`    = as.character(nobs(model_list[["Listening Fatigue"]])),
+             `General Fatigue`      = as.character(nobs(model_list[["General Fatigue"]])),
+             `Communication Health` = as.character(nobs(model_list[["Communication Health"]])))
+    ) %>%
+    mutate(Model = model_label, .before = 1)
+}
+
+# 12. TABLE 2 — MODEL 3 (PRIMARY)
+
+table2_terms <- c(
+  "ASL proficiency"                                   = "asl_proficiency",
+  "ASL usage"                                         = "asl_usage",
+  "English proficiency"                               = "english_proficiency",
+  "English usage"                                     = "english_usage",
+  "Age"                                               = "age",
+  "ASL exposure (early vs. no ASL)"                   = "asl_exposure_groupearly",
+  "ASL exposure (late vs. no ASL)"                    = "asl_exposure_grouplate",
+  "Education (college+ vs. pre-college)"              = "educ_level_groupedcollege_plus",
+  "Speech perception (minimal vs. none)"              = "speech_perception_catminimal",
+  "Speech perception (some ability vs. none)"         = "speech_perception_catsome_ability",
+  "Lipreading (sometimes vs. never/rarely)"           = "lipreading_groupedsometimes",
+  "Lipreading (always vs. never/rarely)"              = "lipreading_groupedalways"
+)
+
+out_cols <- c("Listening Fatigue", "General Fatigue", "Communication Health")
+
+table2_df <- tibble(Predictor = names(table2_terms)) %>%
+  mutate(
+    `Listening Fatigue`    = map_chr(table2_terms, ~ fmt_cell(models_m3[["Listening Fatigue"]], .x)),
+    `General Fatigue`      = map_chr(table2_terms, ~ fmt_cell(models_m3[["General Fatigue"]], .x)),
+    `Communication Health` = map_chr(table2_terms, ~ fmt_cell(models_m3[["Communication Health"]], .x))
+  ) %>%
+  bind_rows(
+    tibble(Predictor = "Model R\u00B2",
+           `Listening Fatigue`    = fmt_r2(models_m3[["Listening Fatigue"]]),
+           `General Fatigue`      = fmt_r2(models_m3[["General Fatigue"]]),
+           `Communication Health` = fmt_r2(models_m3[["Communication Health"]])),
+    tibble(Predictor = "F-test",
+           `Listening Fatigue`    = fmt_f(models_m3[["Listening Fatigue"]]),
+           `General Fatigue`      = fmt_f(models_m3[["General Fatigue"]]),
+           `Communication Health` = fmt_f(models_m3[["Communication Health"]])),
+    tibble(Predictor = "N",
+           `Listening Fatigue`    = as.character(nobs(models_m3[["Listening Fatigue"]])),
+           `General Fatigue`      = as.character(nobs(models_m3[["General Fatigue"]])),
+           `Communication Health` = as.character(nobs(models_m3[["Communication Health"]])))
+  )
+
+cat("\n\nTable 2.\nPrimary regression results (Model 3): Associations between language proficiency, language usage, and outcomes\n\n")
+
+kable(table2_df, format = "html", escape = TRUE,
+      col.names = c("", out_cols), align = c("l", "l", "l", "l")) %>%
+  kable_styling(full_width = FALSE, position = "left") %>%
+  row_spec(4, extra_css = "border-bottom: 2px solid black;") %>%
+  row_spec((nrow(table2_df) - 2):nrow(table2_df), bold = TRUE) %>%
+  print()
+
+write.csv(table2_df, "Table2_Model3_Primary.csv", row.names = FALSE)
+cat("Table 2 saved as Table2_Model3_Primary.csv\n")
+
+# APPENDIX A: Full stats tables (B, β, SE, CI, p)
+
+appendix_terms_m1 <- c(
+  "Proficiency Dominance"                             = "dominance_proficiency",
+  "Age"                                               = "age",
+  "ASL exposure (early vs. no ASL)"                   = "asl_exposure_groupearly",
+  "ASL exposure (late vs. no ASL)"                    = "asl_exposure_grouplate",
+  "Education (college+ vs. pre-college)"              = "educ_level_groupedcollege_plus",
+  "Speech perception (minimal vs. none)"              = "speech_perception_catminimal",
+  "Speech perception (some ability vs. none)"         = "speech_perception_catsome_ability",
+  "Lipreading (sometimes vs. never/rarely)"           = "lipreading_groupedsometimes",
+  "Lipreading (always vs. never/rarely)"              = "lipreading_groupedalways"
+)
+
+appendix_terms_m2 <- c(
+  "Usage Dominance"                                   = "dominance_usage",
+  "Age"                                               = "age",
+  "ASL exposure (early vs. no ASL)"                   = "asl_exposure_groupearly",
+  "ASL exposure (late vs. no ASL)"                    = "asl_exposure_grouplate",
+  "Education (college+ vs. pre-college)"              = "educ_level_groupedcollege_plus",
+  "Speech perception (minimal vs. none)"              = "speech_perception_catminimal",
+  "Speech perception (some ability vs. none)"         = "speech_perception_catsome_ability",
+  "Lipreading (sometimes vs. never/rarely)"           = "lipreading_groupedsometimes",
+  "Lipreading (always vs. never/rarely)"              = "lipreading_groupedalways"
+)
+
+appendix_terms_m3 <- c(
+  "ASL proficiency"                                   = "asl_proficiency",
+  "ASL usage"                                         = "asl_usage",
+  "English proficiency"                               = "english_proficiency",
+  "English usage"                                     = "english_usage",
+  "Age"                                               = "age",
+  "ASL exposure (early vs. no ASL)"                   = "asl_exposure_groupearly",
+  "ASL exposure (late vs. no ASL)"                    = "asl_exposure_grouplate",
+  "Education (college+ vs. pre-college)"              = "educ_level_groupedcollege_plus",
+  "Speech perception (minimal vs. none)"              = "speech_perception_catminimal",
+  "Speech perception (some ability vs. none)"         = "speech_perception_catsome_ability",
+  "Lipreading (sometimes vs. never/rarely)"           = "lipreading_groupedsometimes",
+  "Lipreading (always vs. never/rarely)"              = "lipreading_groupedalways"
+)
+
+appendix_all <- bind_rows(
+  build_appendix_table(models_m1, "Model 1 \u2014 Proficiency Dominance", appendix_terms_m1),
+  build_appendix_table(models_m2, "Model 2 \u2014 Usage Dominance",       appendix_terms_m2),
+  build_appendix_table(models_m3, "Model 3 \u2014 Primary (4 Lang IVs)",  appendix_terms_m3)
+)
+
+print(appendix_all)
+write.csv(appendix_all, "AppendixA_FullStats.csv", row.names = FALSE)
+cat("Appendix A saved as AppendixA_FullStats.csv \n")
+
+# 13. TABLE 3 — MODELS 1 & 2 (SECONDARY DOMINANCE)
+
+table3_df <- tibble(
+  Predictor = c(
+    "Proficiency Dominance (Model 1)",
+    "Usage Dominance (Model 2)",
+    "Model R\u00B2 \u2014 Model 1",
+    "Model R\u00B2 \u2014 Model 2",
+    "N"
+  ),
+  `Listening Fatigue` = c(
+    fmt_cell(models_m1[["Listening Fatigue"]], "dominance_proficiency"),
+    fmt_cell(models_m2[["Listening Fatigue"]], "dominance_usage"),
+    fmt_r2(models_m1[["Listening Fatigue"]]),
+    fmt_r2(models_m2[["Listening Fatigue"]]),
+    as.character(nobs(models_m1[["Listening Fatigue"]]))
+  ),
+  `General Fatigue` = c(
+    fmt_cell(models_m1[["General Fatigue"]], "dominance_proficiency"),
+    fmt_cell(models_m2[["General Fatigue"]], "dominance_usage"),
+    fmt_r2(models_m1[["General Fatigue"]]),
+    fmt_r2(models_m2[["General Fatigue"]]),
+    as.character(nobs(models_m1[["General Fatigue"]]))
+  ),
+  `Communication Health` = c(
+    fmt_cell(models_m1[["Communication Health"]], "dominance_proficiency"),
+    fmt_cell(models_m2[["Communication Health"]], "dominance_usage"),
+    fmt_r2(models_m1[["Communication Health"]]),
+    fmt_r2(models_m2[["Communication Health"]]),
+    as.character(nobs(models_m1[["Communication Health"]]))
+  )
+)
+
+cat("\n\nTable 3.\nSecondary regression results: Dominance-based models (Models 1 and 2)\n\n")
+
+kable(table3_df, format = "html", escape = TRUE,
+      col.names = c("", out_cols), align = c("l", "l", "l", "l")) %>%
+  kable_styling(full_width = FALSE, position = "left") %>%
+  row_spec(3:5, bold = TRUE) %>%
+  footnote(
+    general = paste0(
+      "Dominance scores reflect relative English versus ASL proficiency or usage ",
+      "(positive values indicate greater English dominance; non-signers assigned ASL scores ",
+      "of 0, yielding strongly positive dominance values). ",
+      "Covariates included in these models are identical to those in Table 2."
+    ),
+    general_title = "Note. ",
+    footnote_as_chunk = TRUE
+  ) %>%
+
+  print()
+
+write.csv(table3_df, "Table3_Models12_Dominance.csv", row.names = FALSE)
+cat("Table 3 saved as Table3_Models12_Dominance.csv\n")
+
+# 14. MODEL FIT SUMMARY (ALL 9 MODELS)
+
+get_fit <- function(m, label_model, label_outcome) {
+  s <- summary(m)
+  f <- s$fstatistic
+  p <- pf(f[1], f[2], f[3], lower.tail = FALSE)
+  tibble(
+    Model   = label_model,
+    Outcome = label_outcome,
+    R2      = round(s$r.squared, 3),
+    AdjR2   = round(s$adj.r.squared, 3),
+    F_stat  = round(as.numeric(f[1]), 2),
+    p_value = ifelse(p < .001, "< .001",
+                     sub("^0", "", sprintf("%.3f", p))),
+    N       = nobs(m)
+  )
+}
+
+fit_summary <- bind_rows(
+  map_dfr(outcome_labels, ~ get_fit(models_m1[[.x]], "Model 1 (Proficiency Dominance)", .x)),
+  map_dfr(outcome_labels, ~ get_fit(models_m2[[.x]], "Model 2 (Usage Dominance)",       .x)),
+  map_dfr(outcome_labels, ~ get_fit(models_m3[[.x]], "Model 3 (Primary, 4 Lang IVs)", .x))
+)
+
+cat("\nMODEL FIT SUMMARY \n")
+print(fit_summary)
+write.csv(fit_summary, "model_fit_summary.csv", row.names = FALSE)
+
+# 15. RELIABILITY TABLE
+
+cat("\nRELIABILITY SUMMARY: \n")
+alpha_values %>%
+  mutate(
+    Cronbach_Alpha = round(Cronbach_Alpha, 3),
+    Reliability    = case_when(
+      Cronbach_Alpha >= 0.9 ~ "Excellent",
+      Cronbach_Alpha >= 0.8 ~ "Good",
+      Cronbach_Alpha >= 0.7 ~ "Acceptable",
+      Cronbach_Alpha >= 0.6 ~ "Questionable",
+      TRUE                  ~ "Poor"
+    )
+  ) %>%
+  kable(format = "markdown",
+        caption = "Internal Consistency Reliability of Composite Variables") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed")) %>%
+  print()
+
+```

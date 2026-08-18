@@ -1,0 +1,2057 @@
+#Clear existing data and graphics,
+rm(list=ls()),
+graphics.off(),
+#Load Hmisc library,
+library(Hmisc),
+#Read Data,
+data=read.csv('ListeningEffortAndFa_DATA_2024-11-13_0121.csv'),
+#Setting Labels,
+,
+"label(data$demographics) = ""Completed""",
+"label(data$redcap_survey_identifier) = ""Survey Identifier""",
+"label(data$about_timestamp) = ""Survey Timestamp""",
+"label(data$agree) = ""Are you over the age of 18 years?""",
+"label(data$listen_qualifier) = ""Do you listen to people talk to you using speech/spoken language?(Here listening may include hearing or seeing speech, or both. It is however you experience listening.)""",
+"label(data$about_complete) = ""Complete?""",
+"label(data$demographics_timestamp) = ""Survey Timestamp""",
+"label(data$study_id) = ""Your initials""",
+"label(data$date_enrolled) = ""Todays date""",
+"label(data$address) = ""Your ZIP code where you live""",
+"label(data$email) = ""Your e-mail """,
+"label(data$gender) = ""Gender""",
+"label(data$age) = ""Age (years)""",
+"label(data$race___aa) = ""What is your race or ethnicity? (choice=African American/Black)""",
+"label(data$race___as) = ""What is your race or ethnicity? (choice=Asian)""",
+"label(data$race___naa) = ""What is your race or ethnicity? (choice=Native American/Alaskan)""",
+"label(data$race___napi) = ""What is your race or ethnicity? (choice=Native Hawaiian or Pacific Islander)""",
+"label(data$race___w) = ""What is your race or ethnicity? (choice=White)""",
+"label(data$race___h) = ""What is your race or ethnicity? (choice=Hispanic or Latina/o/x)""",
+"label(data$race___un) = ""What is your race or ethnicity? (choice=Unknown)""",
+"label(data$race____1) = ""What is your race or ethnicity? (choice=I prefer not to answer)""",
+"label(data$student_yn) = ""Are you currently a student?""",
+"label(data$educ_level) = ""What is your highest level of education?""",
+"label(data$employed_yn) = ""Are you currently employed?""",
+"label(data$job) = ""What is your current or most recent job?  """,
+"label(data$computer_yn) = ""Do you use a computer at your job?""",
+"label(data$vision) = ""Can you see a computer monitor clearly?""",
+"label(data$trap1) = ""Do you wear a watch?""",
+"label(data$medical_diagnosis___adhd) = ""Do you have any neurological or cognitive condition listed? (choice=Attention Deficit Disorder or Hyperactivity (ADHD))""",
+"label(data$medical_diagnosis___ld) = ""Do you have any neurological or cognitive condition listed? (choice=Learning disorder (dyslexia))""",
+"label(data$medical_diagnosis___aut) = ""Do you have any neurological or cognitive condition listed? (choice=Neurodivergent or autism spectrum)""",
+"label(data$medical_diagnosis___neuro) = ""Do you have any neurological or cognitive condition listed? (choice=Neurological disability (cerebral palsy, epilepsy, etc))""",
+"label(data$medical_diagnosis___physmot) = ""Do you have any neurological or cognitive condition listed? (choice=Physical or motor disability)""",
+"label(data$medical_diagnosis___oth) = ""Do you have any neurological or cognitive condition listed? (choice=Other: {other_diagnosis})""",
+"label(data$medical_diagnosis___none) = ""Do you have any neurological or cognitive condition listed? (choice=None of the above)""",
+"label(data$other_diagnosis) = ""Please specify what condition:""",
+"label(data$chronic) = ""Do you have any chronic medical condition that causes you to feel tired (such as asthma, lupus, cancer)?""",
+"label(data$chronic_spec) = ""Please specify:""",
+"label(data$stimulant) = ""Do you take any stimulant medication (such as adderall)?""",
+"label(data$hear_speech) = ""Can you hear speech clearly?""",
+"label(data$lipreading) = ""How often do you lipread to understand speech?""",
+"label(data$hear_status) = ""How would you describe yourself?""",
+"label(data$hearing_right_ear) = ""What is your hearing level in your RIGHT ear?""",
+"label(data$hearing_left_ear) = ""What is your hearing level in your LEFT ear?""",
+"label(data$hear_onset) = ""At what age did you become deaf/hard of hearing (in years)? """,
+"label(data$hear_aid_now___no) = ""Currently, do you use hearing aid(s) and/or cochlear implant(s)?   (choice=No)""",
+"label(data$hear_aid_now___ha) = ""Currently, do you use hearing aid(s) and/or cochlear implant(s)?   (choice=Yes - hearing aids)""",
+"label(data$hear_aid_now___ci) = ""Currently, do you use hearing aid(s) and/or cochlear implant(s)?   (choice=Yes - cochlear implants)""",
+"label(data$hearing_aid_past___no) = ""In the past, did you use hearing aid(s) and/or cochlear implant(s)?   (choice=No)""",
+"label(data$hearing_aid_past___ha) = ""In the past, did you use hearing aid(s) and/or cochlear implant(s)?   (choice=Yes - hearing aids)""",
+"label(data$hearing_aid_past___ci) = ""In the past, did you use hearing aid(s) and/or cochlear implant(s)?   (choice=Yes - cochlear implants)""",
+"label(data$hear_aid_age) = ""At what age did you begin using hearing aid(s) and/or cochlear implant(s)? """,
+"label(data$hear_level_self___0) = ""What best describes your hearing level without hearing aids or CI?   (choice=I hear nothing at all)""",
+"label(data$hear_level_self___1) = ""What best describes your hearing level without hearing aids or CI?   (choice=I hear very loud noises or vibrations)""",
+"label(data$hear_level_self___2) = ""What best describes your hearing level without hearing aids or CI?   (choice=I enjoy some music / hear some noise)""",
+"label(data$hear_level_self___3) = ""What best describes your hearing level without hearing aids or CI?   (choice=I can hear most peoples speech)""",
+"label(data$hear_level_self___4) = ""What best describes your hearing level without hearing aids or CI?   (choice=I can converse with some or most people on the phone)""",
+"label(data$hear_level_self___5) = ""What best describes your hearing level without hearing aids or CI?   (choice=I can hear almost all soft sounds)""",
+"label(data$hear_level_self___6) = ""What best describes your hearing level without hearing aids or CI?   (choice=Other (please specify))""",
+"label(data$hear_level_aided_self___0) = ""What best describes your hearing level *WITH* hearing aids or CI?   (choice=I hear nothing at all)""",
+"label(data$hear_level_aided_self___1) = ""What best describes your hearing level *WITH* hearing aids or CI?   (choice=I hear very loud noises or vibrations)""",
+"label(data$hear_level_aided_self___2) = ""What best describes your hearing level *WITH* hearing aids or CI?   (choice=I enjoy some music / hear some noise)""",
+"label(data$hear_level_aided_self___3) = ""What best describes your hearing level *WITH* hearing aids or CI?   (choice=I can hear most peoples speech)""",
+"label(data$hear_level_aided_self___4) = ""What best describes your hearing level *WITH* hearing aids or CI?   (choice=I can converse with some or most people on the phone)""",
+"label(data$hear_level_aided_self___5) = ""What best describes your hearing level *WITH* hearing aids or CI?   (choice=I can hear almost all soft sounds)""",
+"label(data$hear_level_aided_self___6) = ""What best describes your hearing level *WITH* hearing aids or CI?   (choice=Other (please specify))""",
+"label(data$hear_level_other) = ""Please specify:""",
+"label(data$hear_level_aided_other) = ""Please specify:""",
+"label(data$father_dhh_yn) = ""Is your Father or Secondary Caregiver Deaf/Hard-of-Hearing?""",
+"label(data$mother_dhh_yn) = ""Is your Mother or Primary Caregiver Deaf/Hard-of-Hearing?""",
+"label(data$demographics_complete) = ""Complete?""",
+"label(data$blp_eng_asl2_page1_c79014_timestamp) = ""Survey Timestamp""",
+"label(data$asl_user) = ""How often do you use ASL while working at your current or last job?  """,
+"label(data$langrel_level_mother) = ""Mother or Primary caregiver""",BLP LANGUAGE HISTORY
+"label(data$langrel_level_father) = ""Father or Secondary caregiver""",BLP LANGUAGE HISTORY
+"label(data$langrel_level_eng_mother) = ""Mother or Primary caregiver""",BLP LANGUAGE HISTORY
+"label(data$langrel_level_eng_father) = ""Father or Secondary caregiver""",BLP LANGUAGE HISTORY
+"label(data$langrel_langchoice_mother___asl) = ""with Mother or Primary caregiver (choice=ASL)""",BLP LANGUAGE HISTORY
+"label(data$langrel_langchoice_mother___eng) = ""with Mother or Primary caregiver (choice=Spoken English)""",BLP LANGUAGE HISTORY
+"label(data$langrel_langchoice_mother___see) = ""with Mother or Primary caregiver (choice=Signed English)""",BLP LANGUAGE HISTORY
+"label(data$langrel_langchoice_mother___oth) = ""with Mother or Primary caregiver (choice=Other)""",BLP LANGUAGE HISTORY
+"label(data$langrel_langchoice_father___asl) = ""with Father or Secondary caregiver (choice=ASL)""",BLP LANGUAGE HISTORY
+"label(data$langrel_langchoice_father___eng) = ""with Father or Secondary caregiver (choice=Spoken English)""",BLP LANGUAGE HISTORY
+"label(data$langrel_langchoice_father___see) = ""with Father or Secondary caregiver (choice=Signed English)""",BLP LANGUAGE HISTORY
+"label(data$langrel_langchoice_father___oth) = ""with Father or Secondary caregiver (choice=Other)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstream___pk) = ""Mainstreaming, only you or another deaf student (choice=pre-k)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstream___k) = ""Mainstreaming, only you or another deaf student (choice=kinder)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstream___1) = ""Mainstreaming, only you or another deaf student (choice=1)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstream___2) = ""Mainstreaming, only you or another deaf student (choice=2)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstream___3) = ""Mainstreaming, only you or another deaf student (choice=3)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstream___4) = ""Mainstreaming, only you or another deaf student (choice=4)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstream___5) = ""Mainstreaming, only you or another deaf student (choice=5)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstream___6) = ""Mainstreaming, only you or another deaf student (choice=6)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstream___7) = ""Mainstreaming, only you or another deaf student (choice=7)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstream___8) = ""Mainstreaming, only you or another deaf student (choice=8)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstream___9) = ""Mainstreaming, only you or another deaf student (choice=9)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstream___10) = ""Mainstreaming, only you or another deaf student (choice=10)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstream___11) = ""Mainstreaming, only you or another deaf student (choice=11)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstream___12) = ""Mainstreaming, only you or another deaf student (choice=12+)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstreamdeaf___pk) = ""Mainstreaming, small group of deaf students (choice=pre-k)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstreamdeaf___k) = ""Mainstreaming, small group of deaf students (choice=kinder)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstreamdeaf___1) = ""Mainstreaming, small group of deaf students (choice=1)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstreamdeaf___2) = ""Mainstreaming, small group of deaf students (choice=2)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstreamdeaf___3) = ""Mainstreaming, small group of deaf students (choice=3)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstreamdeaf___4) = ""Mainstreaming, small group of deaf students (choice=4)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstreamdeaf___5) = ""Mainstreaming, small group of deaf students (choice=5)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstreamdeaf___6) = ""Mainstreaming, small group of deaf students (choice=6)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstreamdeaf___7) = ""Mainstreaming, small group of deaf students (choice=7)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstreamdeaf___8) = ""Mainstreaming, small group of deaf students (choice=8)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstreamdeaf___9) = ""Mainstreaming, small group of deaf students (choice=9)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstreamdeaf___10) = ""Mainstreaming, small group of deaf students (choice=10)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstreamdeaf___11) = ""Mainstreaming, small group of deaf students (choice=11)""",BLP LANGUAGE HISTORY
+"label(data$langrel_mainstreamdeaf___12) = ""Mainstreaming, small group of deaf students (choice=12+)""",BLP LANGUAGE HISTORY
+"label(data$langrel_oral___pk) = ""Oral school, with little or no ASL (choice=pre-k)""",BLP LANGUAGE HISTORY
+"label(data$langrel_oral___k) = ""Oral school, with little or no ASL (choice=kinder)""",BLP LANGUAGE HISTORY
+"label(data$langrel_oral___1) = ""Oral school, with little or no ASL (choice=1)""",BLP LANGUAGE HISTORY
+"label(data$langrel_oral___2) = ""Oral school, with little or no ASL (choice=2)""",BLP LANGUAGE HISTORY
+"label(data$langrel_oral___3) = ""Oral school, with little or no ASL (choice=3)""",BLP LANGUAGE HISTORY
+"label(data$langrel_oral___4) = ""Oral school, with little or no ASL (choice=4)""",BLP LANGUAGE HISTORY
+"label(data$langrel_oral___5) = ""Oral school, with little or no ASL (choice=5)""",BLP LANGUAGE HISTORY
+"label(data$langrel_oral___6) = ""Oral school, with little or no ASL (choice=6)""",BLP LANGUAGE HISTORY
+"label(data$langrel_oral___7) = ""Oral school, with little or no ASL (choice=7)""",BLP LANGUAGE HISTORY
+"label(data$langrel_oral___8) = ""Oral school, with little or no ASL (choice=8)""",BLP LANGUAGE HISTORY
+"label(data$langrel_oral___9) = ""Oral school, with little or no ASL (choice=9)""",BLP LANGUAGE HISTORY
+"label(data$langrel_oral___10) = ""Oral school, with little or no ASL (choice=10)""",BLP LANGUAGE HISTORY
+"label(data$langrel_oral___11) = ""Oral school, with little or no ASL (choice=11)""",BLP LANGUAGE HISTORY
+"label(data$langrel_oral___12) = ""Oral school, with little or no ASL (choice=12+)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolsmall___pk) = ""Small Deaf school with ASL/SEE (less than 150 students) (choice=pre-k)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolsmall___k) = ""Small Deaf school with ASL/SEE (less than 150 students) (choice=kinder)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolsmall___1) = ""Small Deaf school with ASL/SEE (less than 150 students) (choice=1)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolsmall___2) = ""Small Deaf school with ASL/SEE (less than 150 students) (choice=2)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolsmall___3) = ""Small Deaf school with ASL/SEE (less than 150 students) (choice=3)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolsmall___4) = ""Small Deaf school with ASL/SEE (less than 150 students) (choice=4)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolsmall___5) = ""Small Deaf school with ASL/SEE (less than 150 students) (choice=5)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolsmall___6) = ""Small Deaf school with ASL/SEE (less than 150 students) (choice=6)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolsmall___7) = ""Small Deaf school with ASL/SEE (less than 150 students) (choice=7)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolsmall___8) = ""Small Deaf school with ASL/SEE (less than 150 students) (choice=8)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolsmall___9) = ""Small Deaf school with ASL/SEE (less than 150 students) (choice=9)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolsmall___10) = ""Small Deaf school with ASL/SEE (less than 150 students) (choice=10)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolsmall___11) = ""Small Deaf school with ASL/SEE (less than 150 students) (choice=11)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolsmall___12) = ""Small Deaf school with ASL/SEE (less than 150 students) (choice=12+)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolbig___pk) = ""Large Deaf school with ASL/SEE (more than 150 students) (choice=pre-k)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolbig___k) = ""Large Deaf school with ASL/SEE (more than 150 students) (choice=kinder)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolbig___1) = ""Large Deaf school with ASL/SEE (more than 150 students) (choice=1)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolbig___2) = ""Large Deaf school with ASL/SEE (more than 150 students) (choice=2)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolbig___3) = ""Large Deaf school with ASL/SEE (more than 150 students) (choice=3)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolbig___4) = ""Large Deaf school with ASL/SEE (more than 150 students) (choice=4)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolbig___5) = ""Large Deaf school with ASL/SEE (more than 150 students) (choice=5)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolbig___6) = ""Large Deaf school with ASL/SEE (more than 150 students) (choice=6)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolbig___7) = ""Large Deaf school with ASL/SEE (more than 150 students) (choice=7)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolbig___8) = ""Large Deaf school with ASL/SEE (more than 150 students) (choice=8)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolbig___9) = ""Large Deaf school with ASL/SEE (more than 150 students) (choice=9)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolbig___10) = ""Large Deaf school with ASL/SEE (more than 150 students) (choice=10)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolbig___11) = ""Large Deaf school with ASL/SEE (more than 150 students) (choice=11)""",BLP LANGUAGE HISTORY
+"label(data$langrel_deafschoolbig___12) = ""Large Deaf school with ASL/SEE (more than 150 students) (choice=12+)""",BLP LANGUAGE HISTORY
+"label(data$langrel_reading_fun) = ""Reading - home/leisure time""",Language use
+"label(data$langrel_writing_fun) = ""Writing - home/leisure time""",Language use
+"label(data$langrel_reading_work) = ""Reading - work/job""",Language use
+"label(data$langrel_writing_work) = ""Writing - work/job""",Language use
+"label(data$langrel_use_asl) = ""ASL""",Language use
+"label(data$langrel_use_eng) = ""Spoken English""",Language use
+"label(data$langrel_use_engsign) = ""Signed English""",Language use
+"label(data$langrel_use_written) = ""Written English""",Language use
+"label(data$langrel_comf_asl) = ""ASL""",Language use
+"label(data$langrel_comf_eng) = ""Spoken English""",Language use
+"label(data$langrel_comf_engsign) = ""Signed English""",Language use
+"label(data$langrel_comf_written) = ""Written English""",Language use
+"label(data$lang_use_news___asl) = ""Do you follow news? (choice=Yes, in ASL (for example, The Daily Moth and other ASL vlogs))""",Language use
+"label(data$lang_use_news___eng) = ""Do you follow news? (choice=Yes, in English (for example,, CNN, Fox News, New York Times))""",Language use
+"label(data$lang_use_news___oth) = ""Do you follow news? (choice=Other (please specify))""",Language use
+"label(data$lang_use_news___no) = ""Do you follow news? (choice=No, I dont follow news)""",Language use
+"label(data$lang_use_news_other) = ""Please specify:""",Language use
+"label(data$blp_eng_asl2_page1_c79014_complete) = ""Complete?""",Language use
+"label(data$blp_eng_asl2_timestamp) = ""Survey Timestamp""",Language use
+"label(data$perc_asl_family) = ""perc_asl_family""",Language use
+"label(data$perc_eng_family) = ""perc_eng_family""",Language use
+"label(data$perc_see_family) = ""perc_see_family""",Language use
+"label(data$perc_oth_family) = ""perc_oth_family""",Language use
+"label(data$perc_family_calc) = ""Percent for FAMILY:""",Language use
+"label(data$perc_asl_friends) = ""perc_asl_friends""",Language use
+"label(data$perc_eng_friends) = ""perc_eng_friends""",Language use
+"label(data$perc_see_friends) = ""perc_see_friends""",Language use
+"label(data$perc_oth_friends) = ""perc_oth_friends""",Language use
+"label(data$perc_friends_calc) = ""Percent for FRIENDS:""",Language use
+"label(data$perc_asl_work) = ""perc_asl_work""",Language use
+"label(data$perc_eng_work) = ""perc_eng_work""",Language use
+"label(data$perc_see_work) = ""perc_see_work""",Language use
+"label(data$perc_oth_work) = ""perc_oth_work""",Language use
+"label(data$perc_work_calc) = ""Percent for WORK:""",Language use
+"label(data$perc_asl_count) = ""perc_asl_count""",Language use
+"label(data$perc_eng_count) = ""perc_eng_count""",Language use
+"label(data$perc_see_count) = ""perc_see_count""",Language use
+"label(data$perc_oth_count) = ""perc_oth_count""",Language use
+"label(data$perc_count_calc) = ""perc_count_calc""",Language use
+"label(data$perc_asl_selftalk) = ""perc_asl_selftalk""",Language use
+"label(data$perc_eng_selftalk) = ""perc_eng_selftalk""",Language use
+"label(data$perc_see_selftalk) = ""perc_see_selftalk""",Language use
+"label(data$perc_oth_selftalk) = ""perc_oth_selftalk""",Language use
+"label(data$perc_selftalk_calc) = ""perc_selftalk_calc""",Language use
+"label(data$blp_eng_asl2_complete) = ""Complete?""",
+"label(data$blp_eng_asl2_2_timestamp) = ""Survey Timestamp""",
+"label(data$langhist_aoa_asl) = ""ASL""",LANGUAGE HISTORY
+"label(data$langhist_aoa_eng) = ""Spoken English""",LANGUAGE HISTORY
+"label(data$langhist_aoa_engsign) = ""Signed English""",LANGUAGE HISTORY
+"label(data$langhist_aoa_engreading) = ""Written English (reading)""",LANGUAGE HISTORY
+"label(data$langhist_peers_asl_v2) = ""ASL""",LANGUAGE HISTORY
+"label(data$langhist_peers_eng_v2) = ""Spoken English""",LANGUAGE HISTORY
+"label(data$langhist_peers_engsign_v2) = ""Signed English""",LANGUAGE HISTORY
+"label(data$langhist_fam_asl_v2) = ""ASL""",LANGUAGE HISTORY
+"label(data$langhist_fam_eng_v2) = ""Spoken English""",LANGUAGE HISTORY
+"label(data$langhist_fam_engsign_v2) = ""Signed English""",LANGUAGE HISTORY
+"label(data$langhist_work_asl_v2) = ""ASL""",LANGUAGE HISTORY
+"label(data$langhist_work_eng_v2) = ""Spoken English""",LANGUAGE HISTORY
+"label(data$langhist_work_engsign_v2) = ""Signed English""",LANGUAGE HISTORY
+"label(data$langprof_aslcomp_v2) = ""Understand ASL?""",Language use
+"label(data$langprof_aslprod_v2) = ""Express yourself in ASL?""",Language use
+"label(data$langprof_engread_v2) = ""Read English?""",Language use
+"label(data$langprof_engwrite_v2) = ""Write English?""",Language use
+"label(data$langprof_engcomp_v2) = ""Understand spoken English in conversations (using auditory and/or visual means like lipreading)""",Language use
+"label(data$langprof_engprod_v2) = ""Speak English?""",Language use
+"label(data$langpersp_feelasl) = ""I feel like myself when using ASL.""",LANGUAGE PERSPECTIVES
+"label(data$langpersp_feeleng) = ""I feel like myself when using English.""",LANGUAGE PERSPECTIVES
+"label(data$langpersp_deafculture) = ""I identify with deaf culture""",LANGUAGE PERSPECTIVES
+"label(data$langpersp_hearculture) = ""I identify with hearing culture""",LANGUAGE PERSPECTIVES
+"label(data$langpersp_fluasl) = ""Its important for me to be fluent in ASL.""",LANGUAGE PERSPECTIVES
+"label(data$langpersp_flueng) = ""Its important for me to be fluent in written English.""",LANGUAGE PERSPECTIVES
+"label(data$langpersp_opress) = ""Society oppresses deaf peoples use of ASL.""",LANGUAGE PERSPECTIVES
+"label(data$blp_eng_asl2_2_complete) = ""Complete?""",
+"label(data$vfs10_timestamp) = ""Survey Timestamp""",
+"label(data$vfs10_01) = ""I feel worn out from everyday listening.""",VFS
+"label(data$vfs10_02) = ""Struggling to listen and understand makes me feel tired.""",VFS
+"label(data$vfs10_03) = ""I get so exhausted from listening that I cannot do the things I enjoy.""",VFS
+"label(data$vfs10_04) = ""I schedule my day to avoid getting tired from listening.""",VFS
+"label(data$vfs10_05) = ""I get so tired from listening that I start to miss details in a conversation.""",VFS
+"label(data$vfs10_06) = ""I get so exhausted from listening that I go to bed early.""",VFS
+"label(data$vfs10_07) = ""I withdraw when I am unable to follow conversations in noisy places.""",VFS
+"label(data$vfs10_08) = ""Feeling tired from listening causes strain on my relationships.""",VFS
+"label(data$vfs10_09) = ""I feel emotionally drained when it is hard for me to listen and understand.""",VFS
+"label(data$vfs10_10) = ""It takes a lot of energy to listen and understand.""",VFS
+"label(data$vfs10_complete) = ""Complete?""",
+"label(data$promis_timestamp) = ""Survey Timestamp""",
+"label(data$fatexp18) = ""How often did you run out of energy?""",FAT promis-D
+"label(data$fatexp20) = ""How often did you feel tired?""",FAT promis-D
+"label(data$fatexp42) = ""How often did you run out of mental energy?""",FAT promis-D
+"label(data$fatimp13) = ""How often were you too tired to do errands?""",FAT promis-D
+"label(data$fatexp48) = ""How often did you find yourself getting tired easily?""",FAT promis-D
+"label(data$fatimp26) = ""How often were you too tired to socialize with your family?""",FAT promis-D
+"label(data$fatimp56) = ""How often were you too tired to socialize with your friends?""",FAT promis-D
+"label(data$fatimp53) = ""How often were you too tired to take a short walk?""",FAT promis-D
+"label(data$fatexp26) = ""How often were you too tired to enjoy life?""",FAT promis-D
+"label(data$trap2) = ""How often did you wear a watch""",
+"label(data$fatimp25) = ""How often was it an effort to carry on a conversation because of your fatigue?""",FAT promis-D
+"label(data$elce03) = ""Thinking about the parent/caregiver who took care of you the most when you were growing up, how much did this person understand you?""",FAT promis-D
+"label(data$elce04) = ""Thinking about the parent/caregiver who took care of you the most when you were growing up, how much did you understand this person?""",FAT promis-D
+"label(data$elce05) = ""When you were growing up, how often did you feel included in family conversations or discussions?""",FAT promis-D
+"label(data$elce06) = ""When you were growing up, how often did you feel ignored or left out by your family?""",FAT promis-D
+"label(data$promis_complete) = ""Complete?""",FAT promis-D
+"label(data$promis_17b812_timestamp) = ""Survey Timestamp""",FAT promis-D
+"label(data$comm03) = ""I feel my life is good even though I am deaf or hard of hearing.""",FAT promis-D
+"label(data$comm07) = ""I am satisfied with the way I communicate with deaf or hard of hearing people.""",FAT promis-D
+"label(data$comm13) = ""In general, I feel people accept me as a person who is deaf or hard of hearing.""",FAT promis-D
+"label(data$comm15) = ""People who are close to me accept me as a person who is deaf or hard of hearing.""",FAT promis-D
+"label(data$comm16) = ""I am able to easily get the information I need to make decisions.""",FAT promis-D
+"label(data$comm17) = ""People closest to me share the same communication and language.""",FAT promis-D
+"label(data$comm18) = ""People close to me make an effort to communicate with me because I am deaf or hard of hearing.""",FAT promis-D
+"label(data$comm19) = ""I have friends who are like me and can understand what it is like to be deaf or hard of hearing.""",FAT promis-D
+"label(data$promis_17b812_complete) = ""Complete?""",
+"label(data$payment_checkboxes___1) = ""Participants email is [email]. Use the checkboxes below to track their payment.  (choice=Participant is not eligible for payment, either their survey is incomplete or we need to verify their response)""",
+"label(data$payment_checkboxes___2) = ""Participants email is [email]. Use the checkboxes below to track their payment.  (choice=Participant is eligible for payment)""",
+"label(data$payment_checkboxes___3) = ""Participants email is [email]. Use the checkboxes below to track their payment.  (choice=We have emailed them for confirmation)""",
+"label(data$payment_checkboxes___4) = ""Participants email is [email]. Use the checkboxes below to track their payment.  (choice=We have sent their gift card information)""",
+"label(data$survey_duration) = ""Survey duration:""",
+"label(data$payment_tracking_complete) = ""Complete?""",
+#Setting Units,
+,
+,
+#Setting Factors(will create new variable for factors),
+mapping_agree = c(,
+,"1 = ""Yes"","
+,"0 = ""No"""
+),
+"data$agree.factor = factor(data$agree, levels = names(mapping_agree), labels = mapping_agree)",
+,
+mapping_listen_qualifier = c(,
+,"1 = ""Yes"","
+,"0 = ""No"""
+),
+"data$listen_qualifier.factor = factor(data$listen_qualifier, levels = names(mapping_listen_qualifier), labels = mapping_listen_qualifier)",
+,
+mapping_about_complete = c(,
+,"0 = ""Incomplete"","
+,"1 = ""Unverified"","
+,"2 = ""Complete"""
+),
+"data$about_complete.factor = factor(data$about_complete, levels = names(mapping_about_complete), labels = mapping_about_complete)",
+,
+mapping_gender = c(,
+,"F = ""Female"","
+,"M = ""Male"","
+,"NB = ""Non-binary"","
+,FALSE
+),
+"data$gender.factor = factor(data$gender, levels = names(mapping_gender), labels = mapping_gender)",
+,
+mapping_race___aa = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$race___aa.factor = factor(data$race___aa, levels = names(mapping_race___aa), labels = mapping_race___aa)",
+,
+mapping_race___as = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$race___as.factor = factor(data$race___as, levels = names(mapping_race___as), labels = mapping_race___as)",
+,
+mapping_race___naa = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$race___naa.factor = factor(data$race___naa, levels = names(mapping_race___naa), labels = mapping_race___naa)",
+,
+mapping_race___napi = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$race___napi.factor = factor(data$race___napi, levels = names(mapping_race___napi), labels = mapping_race___napi)",
+,
+mapping_race___w = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$race___w.factor = factor(data$race___w, levels = names(mapping_race___w), labels = mapping_race___w)",
+,
+mapping_race___h = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$race___h.factor = factor(data$race___h, levels = names(mapping_race___h), labels = mapping_race___h)",
+,
+mapping_race___un = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$race___un.factor = factor(data$race___un, levels = names(mapping_race___un), labels = mapping_race___un)",
+,
+mapping_race____1 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$race____1.factor = factor(data$race____1, levels = names(mapping_race____1), labels = mapping_race____1)",
+,
+mapping_student_yn = c(,
+,"1 = ""Yes"","
+,"0 = ""No"""
+),
+"data$student_yn.factor = factor(data$student_yn, levels = names(mapping_student_yn), labels = mapping_student_yn)",
+,
+mapping_educ_level = c(,
+,"1 = ""Less than high school"","
+,"2 = ""High school grad"","
+,"3 = ""Some college"","
+,"4 = ""2-year degree"","
+,"5 = ""Bachelor"","
+,"6 = ""Masters"","
+,"7 = ""Doctorate"""
+),
+"data$educ_level.factor = factor(data$educ_level, levels = names(mapping_educ_level), labels = mapping_educ_level)",
+,
+mapping_employed_yn = c(,
+,"1 = ""Yes"","
+,"0 = ""No"""
+),
+"data$employed_yn.factor = factor(data$employed_yn, levels = names(mapping_employed_yn), labels = mapping_employed_yn)",
+,
+mapping_computer_yn = c(,
+,"1 = ""Yes"","
+,"0 = ""No"""
+),
+"data$computer_yn.factor = factor(data$computer_yn, levels = names(mapping_computer_yn), labels = mapping_computer_yn)",
+,
+mapping_vision = c(,
+,"1 = ""Yes"","
+,"0 = ""No"","
+,"2 = ""Only with corrective eyeglasses/lens"""
+),
+"data$vision.factor = factor(data$vision, levels = names(mapping_vision), labels = mapping_vision)",
+,
+mapping_trap1 = c(,
+,"1 = ""Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always"""
+),
+"data$trap1.factor = factor(data$trap1, levels = names(mapping_trap1), labels = mapping_trap1)",
+,
+mapping_medical_diagnosis___adhd = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$medical_diagnosis___adhd.factor = factor(data$medical_diagnosis___adhd, levels = names(mapping_medical_diagnosis___adhd), labels = mapping_medical_diagnosis___adhd)",
+,
+mapping_medical_diagnosis___ld = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$medical_diagnosis___ld.factor = factor(data$medical_diagnosis___ld, levels = names(mapping_medical_diagnosis___ld), labels = mapping_medical_diagnosis___ld)",
+,
+mapping_medical_diagnosis___aut = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$medical_diagnosis___aut.factor = factor(data$medical_diagnosis___aut, levels = names(mapping_medical_diagnosis___aut), labels = mapping_medical_diagnosis___aut)",
+,
+mapping_medical_diagnosis___neuro = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$medical_diagnosis___neuro.factor = factor(data$medical_diagnosis___neuro, levels = names(mapping_medical_diagnosis___neuro), labels = mapping_medical_diagnosis___neuro)",
+,
+mapping_medical_diagnosis___physmot = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$medical_diagnosis___physmot.factor = factor(data$medical_diagnosis___physmot, levels = names(mapping_medical_diagnosis___physmot), labels = mapping_medical_diagnosis___physmot)",
+,
+mapping_medical_diagnosis___oth = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$medical_diagnosis___oth.factor = factor(data$medical_diagnosis___oth, levels = names(mapping_medical_diagnosis___oth), labels = mapping_medical_diagnosis___oth)",
+,
+mapping_medical_diagnosis___none = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$medical_diagnosis___none.factor = factor(data$medical_diagnosis___none, levels = names(mapping_medical_diagnosis___none), labels = mapping_medical_diagnosis___none)",
+,
+mapping_chronic = c(,
+,"1 = ""No"","
+,"2 = ""Yes (please specify)"","
+,FALSE
+),
+"data$chronic.factor = factor(data$chronic, levels = names(mapping_chronic), labels = mapping_chronic)",
+,
+mapping_stimulant = c(,
+,"0 = ""No"","
+,"1 = ""Yes"","
+,FALSE
+),
+"data$stimulant.factor = factor(data$stimulant, levels = names(mapping_stimulant), labels = mapping_stimulant)",
+,
+mapping_hear_speech = c(,
+,"1 = ""Yes"","
+,"0 = ""No"","
+,"2 = ""Only with hearing aids/cochlear implants (CI)"""
+),
+"data$hear_speech.factor = factor(data$hear_speech, levels = names(mapping_hear_speech), labels = mapping_hear_speech)",
+,
+mapping_lipreading = c(,
+,"3 = ""always"","
+,"2 = ""sometimes"","
+,"1 = ""rarely"","
+,"0 = ""almost never"""
+),
+"data$lipreading.factor = factor(data$lipreading, levels = names(mapping_lipreading), labels = mapping_lipreading)",
+,
+mapping_hear_status = c(,
+,"D = ""Deaf (severe/profound)"","
+,"HH = ""Hard of Hearing (mild/moderate)"","
+,"H = ""Hearing"""
+),
+"data$hear_status.factor = factor(data$hear_status, levels = names(mapping_hear_status), labels = mapping_hear_status)",
+,
+mapping_hearing_right_ear = c(,
+,"0 = ""typical hearing"","
+,"1 = ""mild hearing loss"","
+,"2 = ""moderate hearing loss"","
+,"3 = ""severe hearing loss"","
+,"4 = ""profound hearing loss"""
+),
+"data$hearing_right_ear.factor = factor(data$hearing_right_ear, levels = names(mapping_hearing_right_ear), labels = mapping_hearing_right_ear)",
+,
+mapping_hearing_left_ear = c(,
+,"0 = ""typical hearing"","
+,"1 = ""mild hearing loss"","
+,"2 = ""moderate hearing loss"","
+,"3 = ""severe hearing loss"","
+,"4 = ""profound hearing loss"""
+),
+"data$hearing_left_ear.factor = factor(data$hearing_left_ear, levels = names(mapping_hearing_left_ear), labels = mapping_hearing_left_ear)",
+,
+mapping_hear_aid_now___no = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hear_aid_now___no.factor = factor(data$hear_aid_now___no, levels = names(mapping_hear_aid_now___no), labels = mapping_hear_aid_now___no)",
+,
+mapping_hear_aid_now___ha = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hear_aid_now___ha.factor = factor(data$hear_aid_now___ha, levels = names(mapping_hear_aid_now___ha), labels = mapping_hear_aid_now___ha)",
+,
+mapping_hear_aid_now___ci = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hear_aid_now___ci.factor = factor(data$hear_aid_now___ci, levels = names(mapping_hear_aid_now___ci), labels = mapping_hear_aid_now___ci)",
+,
+mapping_hearing_aid_past___no = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hearing_aid_past___no.factor = factor(data$hearing_aid_past___no, levels = names(mapping_hearing_aid_past___no), labels = mapping_hearing_aid_past___no)",
+,
+mapping_hearing_aid_past___ha = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hearing_aid_past___ha.factor = factor(data$hearing_aid_past___ha, levels = names(mapping_hearing_aid_past___ha), labels = mapping_hearing_aid_past___ha)",
+,
+mapping_hearing_aid_past___ci = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hearing_aid_past___ci.factor = factor(data$hearing_aid_past___ci, levels = names(mapping_hearing_aid_past___ci), labels = mapping_hearing_aid_past___ci)",
+,
+mapping_hear_level_self___0 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hear_level_self___0.factor = factor(data$hear_level_self___0, levels = names(mapping_hear_level_self___0), labels = mapping_hear_level_self___0)",
+,
+mapping_hear_level_self___1 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hear_level_self___1.factor = factor(data$hear_level_self___1, levels = names(mapping_hear_level_self___1), labels = mapping_hear_level_self___1)",
+,
+mapping_hear_level_self___2 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hear_level_self___2.factor = factor(data$hear_level_self___2, levels = names(mapping_hear_level_self___2), labels = mapping_hear_level_self___2)",
+,
+mapping_hear_level_self___3 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hear_level_self___3.factor = factor(data$hear_level_self___3, levels = names(mapping_hear_level_self___3), labels = mapping_hear_level_self___3)",
+,
+mapping_hear_level_self___4 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hear_level_self___4.factor = factor(data$hear_level_self___4, levels = names(mapping_hear_level_self___4), labels = mapping_hear_level_self___4)",
+,
+mapping_hear_level_self___5 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hear_level_self___5.factor = factor(data$hear_level_self___5, levels = names(mapping_hear_level_self___5), labels = mapping_hear_level_self___5)",
+,
+mapping_hear_level_self___6 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hear_level_self___6.factor = factor(data$hear_level_self___6, levels = names(mapping_hear_level_self___6), labels = mapping_hear_level_self___6)",
+,
+mapping_hear_level_aided_self___0 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hear_level_aided_self___0.factor = factor(data$hear_level_aided_self___0, levels = names(mapping_hear_level_aided_self___0), labels = mapping_hear_level_aided_self___0)",
+,
+mapping_hear_level_aided_self___1 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hear_level_aided_self___1.factor = factor(data$hear_level_aided_self___1, levels = names(mapping_hear_level_aided_self___1), labels = mapping_hear_level_aided_self___1)",
+,
+mapping_hear_level_aided_self___2 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hear_level_aided_self___2.factor = factor(data$hear_level_aided_self___2, levels = names(mapping_hear_level_aided_self___2), labels = mapping_hear_level_aided_self___2)",
+,
+mapping_hear_level_aided_self___3 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hear_level_aided_self___3.factor = factor(data$hear_level_aided_self___3, levels = names(mapping_hear_level_aided_self___3), labels = mapping_hear_level_aided_self___3)",
+,
+mapping_hear_level_aided_self___4 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hear_level_aided_self___4.factor = factor(data$hear_level_aided_self___4, levels = names(mapping_hear_level_aided_self___4), labels = mapping_hear_level_aided_self___4)",
+,
+mapping_hear_level_aided_self___5 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hear_level_aided_self___5.factor = factor(data$hear_level_aided_self___5, levels = names(mapping_hear_level_aided_self___5), labels = mapping_hear_level_aided_self___5)",
+,
+mapping_hear_level_aided_self___6 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$hear_level_aided_self___6.factor = factor(data$hear_level_aided_self___6, levels = names(mapping_hear_level_aided_self___6), labels = mapping_hear_level_aided_self___6)",
+,
+mapping_father_dhh_yn = c(,
+,"1 = ""Yes"","
+,"0 = ""No"""
+),
+"data$father_dhh_yn.factor = factor(data$father_dhh_yn, levels = names(mapping_father_dhh_yn), labels = mapping_father_dhh_yn)",
+,
+mapping_mother_dhh_yn = c(,
+,"1 = ""Yes"","
+,"0 = ""No"""
+),
+"data$mother_dhh_yn.factor = factor(data$mother_dhh_yn, levels = names(mapping_mother_dhh_yn), labels = mapping_mother_dhh_yn)",
+,
+mapping_demographics_complete = c(,
+,"0 = ""Incomplete"","
+,"1 = ""Unverified"","
+,"2 = ""Complete"""
+),
+"data$demographics_complete.factor = factor(data$demographics_complete, levels = names(mapping_demographics_complete), labels = mapping_demographics_complete)",
+,
+mapping_asl_user = c(,
+,"3 = ""I use ASL every day at my job."","
+,"2 = ""I use ASL several days a week at my job."","
+,"1 = ""I use ASL rarely at my job."","
+,"0 = ""I do not use ASL at my job."""
+),
+"data$asl_user.factor = factor(data$asl_user, levels = names(mapping_asl_user), labels = mapping_asl_user)",
+,
+mapping_langrel_level_mother = c(,
+,"0 = ""None"","
+,"1 = ""Very basic"","
+,"2 = ""Conversational"","
+,"3 = ""Advanced"","
+,"4 = ""Fluent"""
+),
+"data$langrel_level_mother.factor = factor(data$langrel_level_mother, levels = names(mapping_langrel_level_mother), labels = mapping_langrel_level_mother)",
+,
+mapping_langrel_level_father = c(,
+,"0 = ""None"","
+,"1 = ""Very basic"","
+,"2 = ""Conversational"","
+,"3 = ""Advanced"","
+,"4 = ""Fluent"""
+),
+"data$langrel_level_father.factor = factor(data$langrel_level_father, levels = names(mapping_langrel_level_father), labels = mapping_langrel_level_father)",
+,
+mapping_langrel_level_eng_mother = c(,
+,"0 = ""None"","
+,"1 = ""Very basic"","
+,"2 = ""Conversational"","
+,"3 = ""Advanced"","
+,"4 = ""Fluent"""
+),
+"data$langrel_level_eng_mother.factor = factor(data$langrel_level_eng_mother, levels = names(mapping_langrel_level_eng_mother), labels = mapping_langrel_level_eng_mother)",
+,
+mapping_langrel_level_eng_father = c(,
+,"0 = ""None"","
+,"1 = ""Very basic"","
+,"2 = ""Conversational"","
+,"3 = ""Advanced"","
+,"4 = ""Fluent"""
+),
+"data$langrel_level_eng_father.factor = factor(data$langrel_level_eng_father, levels = names(mapping_langrel_level_eng_father), labels = mapping_langrel_level_eng_father)",
+,
+mapping_langrel_langchoice_mother___asl = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_langchoice_mother___asl.factor = factor(data$langrel_langchoice_mother___asl, levels = names(mapping_langrel_langchoice_mother___asl), labels = mapping_langrel_langchoice_mother___asl)",
+,
+mapping_langrel_langchoice_mother___eng = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_langchoice_mother___eng.factor = factor(data$langrel_langchoice_mother___eng, levels = names(mapping_langrel_langchoice_mother___eng), labels = mapping_langrel_langchoice_mother___eng)",
+,
+mapping_langrel_langchoice_mother___see = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_langchoice_mother___see.factor = factor(data$langrel_langchoice_mother___see, levels = names(mapping_langrel_langchoice_mother___see), labels = mapping_langrel_langchoice_mother___see)",
+,
+mapping_langrel_langchoice_mother___oth = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_langchoice_mother___oth.factor = factor(data$langrel_langchoice_mother___oth, levels = names(mapping_langrel_langchoice_mother___oth), labels = mapping_langrel_langchoice_mother___oth)",
+,
+mapping_langrel_langchoice_father___asl = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_langchoice_father___asl.factor = factor(data$langrel_langchoice_father___asl, levels = names(mapping_langrel_langchoice_father___asl), labels = mapping_langrel_langchoice_father___asl)",
+,
+mapping_langrel_langchoice_father___eng = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_langchoice_father___eng.factor = factor(data$langrel_langchoice_father___eng, levels = names(mapping_langrel_langchoice_father___eng), labels = mapping_langrel_langchoice_father___eng)",
+,
+mapping_langrel_langchoice_father___see = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_langchoice_father___see.factor = factor(data$langrel_langchoice_father___see, levels = names(mapping_langrel_langchoice_father___see), labels = mapping_langrel_langchoice_father___see)",
+,
+mapping_langrel_langchoice_father___oth = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_langchoice_father___oth.factor = factor(data$langrel_langchoice_father___oth, levels = names(mapping_langrel_langchoice_father___oth), labels = mapping_langrel_langchoice_father___oth)",
+,
+mapping_langrel_mainstream___pk = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstream___pk.factor = factor(data$langrel_mainstream___pk, levels = names(mapping_langrel_mainstream___pk), labels = mapping_langrel_mainstream___pk)",
+,
+mapping_langrel_mainstream___k = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstream___k.factor = factor(data$langrel_mainstream___k, levels = names(mapping_langrel_mainstream___k), labels = mapping_langrel_mainstream___k)",
+,
+mapping_langrel_mainstream___1 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstream___1.factor = factor(data$langrel_mainstream___1, levels = names(mapping_langrel_mainstream___1), labels = mapping_langrel_mainstream___1)",
+,
+mapping_langrel_mainstream___2 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstream___2.factor = factor(data$langrel_mainstream___2, levels = names(mapping_langrel_mainstream___2), labels = mapping_langrel_mainstream___2)",
+,
+mapping_langrel_mainstream___3 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstream___3.factor = factor(data$langrel_mainstream___3, levels = names(mapping_langrel_mainstream___3), labels = mapping_langrel_mainstream___3)",
+,
+mapping_langrel_mainstream___4 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstream___4.factor = factor(data$langrel_mainstream___4, levels = names(mapping_langrel_mainstream___4), labels = mapping_langrel_mainstream___4)",
+,
+mapping_langrel_mainstream___5 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstream___5.factor = factor(data$langrel_mainstream___5, levels = names(mapping_langrel_mainstream___5), labels = mapping_langrel_mainstream___5)",
+,
+mapping_langrel_mainstream___6 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstream___6.factor = factor(data$langrel_mainstream___6, levels = names(mapping_langrel_mainstream___6), labels = mapping_langrel_mainstream___6)",
+,
+mapping_langrel_mainstream___7 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstream___7.factor = factor(data$langrel_mainstream___7, levels = names(mapping_langrel_mainstream___7), labels = mapping_langrel_mainstream___7)",
+,
+mapping_langrel_mainstream___8 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstream___8.factor = factor(data$langrel_mainstream___8, levels = names(mapping_langrel_mainstream___8), labels = mapping_langrel_mainstream___8)",
+,
+mapping_langrel_mainstream___9 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstream___9.factor = factor(data$langrel_mainstream___9, levels = names(mapping_langrel_mainstream___9), labels = mapping_langrel_mainstream___9)",
+,
+mapping_langrel_mainstream___10 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstream___10.factor = factor(data$langrel_mainstream___10, levels = names(mapping_langrel_mainstream___10), labels = mapping_langrel_mainstream___10)",
+,
+mapping_langrel_mainstream___11 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstream___11.factor = factor(data$langrel_mainstream___11, levels = names(mapping_langrel_mainstream___11), labels = mapping_langrel_mainstream___11)",
+,
+mapping_langrel_mainstream___12 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstream___12.factor = factor(data$langrel_mainstream___12, levels = names(mapping_langrel_mainstream___12), labels = mapping_langrel_mainstream___12)",
+,
+mapping_langrel_mainstreamdeaf___pk = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstreamdeaf___pk.factor = factor(data$langrel_mainstreamdeaf___pk, levels = names(mapping_langrel_mainstreamdeaf___pk), labels = mapping_langrel_mainstreamdeaf___pk)",
+,
+mapping_langrel_mainstreamdeaf___k = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstreamdeaf___k.factor = factor(data$langrel_mainstreamdeaf___k, levels = names(mapping_langrel_mainstreamdeaf___k), labels = mapping_langrel_mainstreamdeaf___k)",
+,
+mapping_langrel_mainstreamdeaf___1 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstreamdeaf___1.factor = factor(data$langrel_mainstreamdeaf___1, levels = names(mapping_langrel_mainstreamdeaf___1), labels = mapping_langrel_mainstreamdeaf___1)",
+,
+mapping_langrel_mainstreamdeaf___2 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstreamdeaf___2.factor = factor(data$langrel_mainstreamdeaf___2, levels = names(mapping_langrel_mainstreamdeaf___2), labels = mapping_langrel_mainstreamdeaf___2)",
+,
+mapping_langrel_mainstreamdeaf___3 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstreamdeaf___3.factor = factor(data$langrel_mainstreamdeaf___3, levels = names(mapping_langrel_mainstreamdeaf___3), labels = mapping_langrel_mainstreamdeaf___3)",
+,
+mapping_langrel_mainstreamdeaf___4 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstreamdeaf___4.factor = factor(data$langrel_mainstreamdeaf___4, levels = names(mapping_langrel_mainstreamdeaf___4), labels = mapping_langrel_mainstreamdeaf___4)",
+,
+mapping_langrel_mainstreamdeaf___5 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstreamdeaf___5.factor = factor(data$langrel_mainstreamdeaf___5, levels = names(mapping_langrel_mainstreamdeaf___5), labels = mapping_langrel_mainstreamdeaf___5)",
+,
+mapping_langrel_mainstreamdeaf___6 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstreamdeaf___6.factor = factor(data$langrel_mainstreamdeaf___6, levels = names(mapping_langrel_mainstreamdeaf___6), labels = mapping_langrel_mainstreamdeaf___6)",
+,
+mapping_langrel_mainstreamdeaf___7 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstreamdeaf___7.factor = factor(data$langrel_mainstreamdeaf___7, levels = names(mapping_langrel_mainstreamdeaf___7), labels = mapping_langrel_mainstreamdeaf___7)",
+,
+mapping_langrel_mainstreamdeaf___8 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstreamdeaf___8.factor = factor(data$langrel_mainstreamdeaf___8, levels = names(mapping_langrel_mainstreamdeaf___8), labels = mapping_langrel_mainstreamdeaf___8)",
+,
+mapping_langrel_mainstreamdeaf___9 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstreamdeaf___9.factor = factor(data$langrel_mainstreamdeaf___9, levels = names(mapping_langrel_mainstreamdeaf___9), labels = mapping_langrel_mainstreamdeaf___9)",
+,
+mapping_langrel_mainstreamdeaf___10 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstreamdeaf___10.factor = factor(data$langrel_mainstreamdeaf___10, levels = names(mapping_langrel_mainstreamdeaf___10), labels = mapping_langrel_mainstreamdeaf___10)",
+,
+mapping_langrel_mainstreamdeaf___11 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstreamdeaf___11.factor = factor(data$langrel_mainstreamdeaf___11, levels = names(mapping_langrel_mainstreamdeaf___11), labels = mapping_langrel_mainstreamdeaf___11)",
+,
+mapping_langrel_mainstreamdeaf___12 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_mainstreamdeaf___12.factor = factor(data$langrel_mainstreamdeaf___12, levels = names(mapping_langrel_mainstreamdeaf___12), labels = mapping_langrel_mainstreamdeaf___12)",
+,
+mapping_langrel_oral___pk = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_oral___pk.factor = factor(data$langrel_oral___pk, levels = names(mapping_langrel_oral___pk), labels = mapping_langrel_oral___pk)",
+,
+mapping_langrel_oral___k = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_oral___k.factor = factor(data$langrel_oral___k, levels = names(mapping_langrel_oral___k), labels = mapping_langrel_oral___k)",
+,
+mapping_langrel_oral___1 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_oral___1.factor = factor(data$langrel_oral___1, levels = names(mapping_langrel_oral___1), labels = mapping_langrel_oral___1)",
+,
+mapping_langrel_oral___2 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_oral___2.factor = factor(data$langrel_oral___2, levels = names(mapping_langrel_oral___2), labels = mapping_langrel_oral___2)",
+,
+mapping_langrel_oral___3 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_oral___3.factor = factor(data$langrel_oral___3, levels = names(mapping_langrel_oral___3), labels = mapping_langrel_oral___3)",
+,
+mapping_langrel_oral___4 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_oral___4.factor = factor(data$langrel_oral___4, levels = names(mapping_langrel_oral___4), labels = mapping_langrel_oral___4)",
+,
+mapping_langrel_oral___5 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_oral___5.factor = factor(data$langrel_oral___5, levels = names(mapping_langrel_oral___5), labels = mapping_langrel_oral___5)",
+,
+mapping_langrel_oral___6 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_oral___6.factor = factor(data$langrel_oral___6, levels = names(mapping_langrel_oral___6), labels = mapping_langrel_oral___6)",
+,
+mapping_langrel_oral___7 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_oral___7.factor = factor(data$langrel_oral___7, levels = names(mapping_langrel_oral___7), labels = mapping_langrel_oral___7)",
+,
+mapping_langrel_oral___8 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_oral___8.factor = factor(data$langrel_oral___8, levels = names(mapping_langrel_oral___8), labels = mapping_langrel_oral___8)",
+,
+mapping_langrel_oral___9 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_oral___9.factor = factor(data$langrel_oral___9, levels = names(mapping_langrel_oral___9), labels = mapping_langrel_oral___9)",
+,
+mapping_langrel_oral___10 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_oral___10.factor = factor(data$langrel_oral___10, levels = names(mapping_langrel_oral___10), labels = mapping_langrel_oral___10)",
+,
+mapping_langrel_oral___11 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_oral___11.factor = factor(data$langrel_oral___11, levels = names(mapping_langrel_oral___11), labels = mapping_langrel_oral___11)",
+,
+mapping_langrel_oral___12 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_oral___12.factor = factor(data$langrel_oral___12, levels = names(mapping_langrel_oral___12), labels = mapping_langrel_oral___12)",
+,
+mapping_langrel_deafschoolsmall___pk = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolsmall___pk.factor = factor(data$langrel_deafschoolsmall___pk, levels = names(mapping_langrel_deafschoolsmall___pk), labels = mapping_langrel_deafschoolsmall___pk)",
+,
+mapping_langrel_deafschoolsmall___k = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolsmall___k.factor = factor(data$langrel_deafschoolsmall___k, levels = names(mapping_langrel_deafschoolsmall___k), labels = mapping_langrel_deafschoolsmall___k)",
+,
+mapping_langrel_deafschoolsmall___1 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolsmall___1.factor = factor(data$langrel_deafschoolsmall___1, levels = names(mapping_langrel_deafschoolsmall___1), labels = mapping_langrel_deafschoolsmall___1)",
+,
+mapping_langrel_deafschoolsmall___2 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolsmall___2.factor = factor(data$langrel_deafschoolsmall___2, levels = names(mapping_langrel_deafschoolsmall___2), labels = mapping_langrel_deafschoolsmall___2)",
+,
+mapping_langrel_deafschoolsmall___3 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolsmall___3.factor = factor(data$langrel_deafschoolsmall___3, levels = names(mapping_langrel_deafschoolsmall___3), labels = mapping_langrel_deafschoolsmall___3)",
+,
+mapping_langrel_deafschoolsmall___4 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolsmall___4.factor = factor(data$langrel_deafschoolsmall___4, levels = names(mapping_langrel_deafschoolsmall___4), labels = mapping_langrel_deafschoolsmall___4)",
+,
+mapping_langrel_deafschoolsmall___5 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolsmall___5.factor = factor(data$langrel_deafschoolsmall___5, levels = names(mapping_langrel_deafschoolsmall___5), labels = mapping_langrel_deafschoolsmall___5)",
+,
+mapping_langrel_deafschoolsmall___6 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolsmall___6.factor = factor(data$langrel_deafschoolsmall___6, levels = names(mapping_langrel_deafschoolsmall___6), labels = mapping_langrel_deafschoolsmall___6)",
+,
+mapping_langrel_deafschoolsmall___7 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolsmall___7.factor = factor(data$langrel_deafschoolsmall___7, levels = names(mapping_langrel_deafschoolsmall___7), labels = mapping_langrel_deafschoolsmall___7)",
+,
+mapping_langrel_deafschoolsmall___8 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolsmall___8.factor = factor(data$langrel_deafschoolsmall___8, levels = names(mapping_langrel_deafschoolsmall___8), labels = mapping_langrel_deafschoolsmall___8)",
+,
+mapping_langrel_deafschoolsmall___9 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolsmall___9.factor = factor(data$langrel_deafschoolsmall___9, levels = names(mapping_langrel_deafschoolsmall___9), labels = mapping_langrel_deafschoolsmall___9)",
+,
+mapping_langrel_deafschoolsmall___10 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolsmall___10.factor = factor(data$langrel_deafschoolsmall___10, levels = names(mapping_langrel_deafschoolsmall___10), labels = mapping_langrel_deafschoolsmall___10)",
+,
+mapping_langrel_deafschoolsmall___11 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolsmall___11.factor = factor(data$langrel_deafschoolsmall___11, levels = names(mapping_langrel_deafschoolsmall___11), labels = mapping_langrel_deafschoolsmall___11)",
+,
+mapping_langrel_deafschoolsmall___12 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolsmall___12.factor = factor(data$langrel_deafschoolsmall___12, levels = names(mapping_langrel_deafschoolsmall___12), labels = mapping_langrel_deafschoolsmall___12)",
+,
+mapping_langrel_deafschoolbig___pk = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolbig___pk.factor = factor(data$langrel_deafschoolbig___pk, levels = names(mapping_langrel_deafschoolbig___pk), labels = mapping_langrel_deafschoolbig___pk)",
+,
+mapping_langrel_deafschoolbig___k = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolbig___k.factor = factor(data$langrel_deafschoolbig___k, levels = names(mapping_langrel_deafschoolbig___k), labels = mapping_langrel_deafschoolbig___k)",
+,
+mapping_langrel_deafschoolbig___1 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolbig___1.factor = factor(data$langrel_deafschoolbig___1, levels = names(mapping_langrel_deafschoolbig___1), labels = mapping_langrel_deafschoolbig___1)",
+,
+mapping_langrel_deafschoolbig___2 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolbig___2.factor = factor(data$langrel_deafschoolbig___2, levels = names(mapping_langrel_deafschoolbig___2), labels = mapping_langrel_deafschoolbig___2)",
+,
+mapping_langrel_deafschoolbig___3 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolbig___3.factor = factor(data$langrel_deafschoolbig___3, levels = names(mapping_langrel_deafschoolbig___3), labels = mapping_langrel_deafschoolbig___3)",
+,
+mapping_langrel_deafschoolbig___4 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolbig___4.factor = factor(data$langrel_deafschoolbig___4, levels = names(mapping_langrel_deafschoolbig___4), labels = mapping_langrel_deafschoolbig___4)",
+,
+mapping_langrel_deafschoolbig___5 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolbig___5.factor = factor(data$langrel_deafschoolbig___5, levels = names(mapping_langrel_deafschoolbig___5), labels = mapping_langrel_deafschoolbig___5)",
+,
+mapping_langrel_deafschoolbig___6 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolbig___6.factor = factor(data$langrel_deafschoolbig___6, levels = names(mapping_langrel_deafschoolbig___6), labels = mapping_langrel_deafschoolbig___6)",
+,
+mapping_langrel_deafschoolbig___7 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolbig___7.factor = factor(data$langrel_deafschoolbig___7, levels = names(mapping_langrel_deafschoolbig___7), labels = mapping_langrel_deafschoolbig___7)",
+,
+mapping_langrel_deafschoolbig___8 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolbig___8.factor = factor(data$langrel_deafschoolbig___8, levels = names(mapping_langrel_deafschoolbig___8), labels = mapping_langrel_deafschoolbig___8)",
+,
+mapping_langrel_deafschoolbig___9 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolbig___9.factor = factor(data$langrel_deafschoolbig___9, levels = names(mapping_langrel_deafschoolbig___9), labels = mapping_langrel_deafschoolbig___9)",
+,
+mapping_langrel_deafschoolbig___10 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolbig___10.factor = factor(data$langrel_deafschoolbig___10, levels = names(mapping_langrel_deafschoolbig___10), labels = mapping_langrel_deafschoolbig___10)",
+,
+mapping_langrel_deafschoolbig___11 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolbig___11.factor = factor(data$langrel_deafschoolbig___11, levels = names(mapping_langrel_deafschoolbig___11), labels = mapping_langrel_deafschoolbig___11)",
+,
+mapping_langrel_deafschoolbig___12 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$langrel_deafschoolbig___12.factor = factor(data$langrel_deafschoolbig___12, levels = names(mapping_langrel_deafschoolbig___12), labels = mapping_langrel_deafschoolbig___12)",
+,
+mapping_langrel_reading_fun = c(,
+,"0 = ""Never/almost never"","
+,"1 = ""At least once a month"","
+,"2 = ""About once/a few days a week"","
+,"3 = ""Daily/almost daily"""
+),
+"data$langrel_reading_fun.factor = factor(data$langrel_reading_fun, levels = names(mapping_langrel_reading_fun), labels = mapping_langrel_reading_fun)",
+,
+mapping_langrel_writing_fun = c(,
+,"0 = ""Never/almost never"","
+,"1 = ""At least once a month"","
+,"2 = ""About once/a few days a week"","
+,"3 = ""Daily/almost daily"""
+),
+"data$langrel_writing_fun.factor = factor(data$langrel_writing_fun, levels = names(mapping_langrel_writing_fun), labels = mapping_langrel_writing_fun)",
+,
+mapping_langrel_reading_work = c(,
+,"0 = ""Never/almost never"","
+,"1 = ""At least once a month"","
+,"2 = ""About once/a few days a week"","
+,"3 = ""Daily/almost daily"""
+),
+"data$langrel_reading_work.factor = factor(data$langrel_reading_work, levels = names(mapping_langrel_reading_work), labels = mapping_langrel_reading_work)",
+,
+mapping_langrel_writing_work = c(,
+,"0 = ""Never/almost never"","
+,"1 = ""At least once a month"","
+,"2 = ""About once/a few days a week"","
+,"3 = ""Daily/almost daily"""
+),
+"data$langrel_writing_work.factor = factor(data$langrel_writing_work, levels = names(mapping_langrel_writing_work), labels = mapping_langrel_writing_work)",
+,
+mapping_langrel_use_asl = c(,
+,"0 = ""Never/almost never"","
+,"1 = ""At least once a month"","
+,"2 = ""About once/a few days a week"","
+,"3 = ""Daily/almost daily"""
+),
+"data$langrel_use_asl.factor = factor(data$langrel_use_asl, levels = names(mapping_langrel_use_asl), labels = mapping_langrel_use_asl)",
+,
+mapping_langrel_use_eng = c(,
+,"0 = ""Never/almost never"","
+,"1 = ""At least once a month"","
+,"2 = ""About once/a few days a week"","
+,"3 = ""Daily/almost daily"""
+),
+"data$langrel_use_eng.factor = factor(data$langrel_use_eng, levels = names(mapping_langrel_use_eng), labels = mapping_langrel_use_eng)",
+,
+mapping_langrel_use_engsign = c(,
+,"0 = ""Never/almost never"","
+,"1 = ""At least once a month"","
+,"2 = ""About once/a few days a week"","
+,"3 = ""Daily/almost daily"""
+),
+"data$langrel_use_engsign.factor = factor(data$langrel_use_engsign, levels = names(mapping_langrel_use_engsign), labels = mapping_langrel_use_engsign)",
+,
+mapping_langrel_use_written = c(,
+,"0 = ""Never/almost never"","
+,"1 = ""At least once a month"","
+,"2 = ""About once/a few days a week"","
+,"3 = ""Daily/almost daily"""
+),
+"data$langrel_use_written.factor = factor(data$langrel_use_written, levels = names(mapping_langrel_use_written), labels = mapping_langrel_use_written)",
+,
+mapping_langrel_comf_asl = c(,
+,"0 = ""No one"","
+,"1 = ""Some people"","
+,"2 = ""Most people"","
+,"3 = ""Anyone"""
+),
+"data$langrel_comf_asl.factor = factor(data$langrel_comf_asl, levels = names(mapping_langrel_comf_asl), labels = mapping_langrel_comf_asl)",
+,
+mapping_langrel_comf_eng = c(,
+,"0 = ""No one"","
+,"1 = ""Some people"","
+,"2 = ""Most people"","
+,"3 = ""Anyone"""
+),
+"data$langrel_comf_eng.factor = factor(data$langrel_comf_eng, levels = names(mapping_langrel_comf_eng), labels = mapping_langrel_comf_eng)",
+,
+mapping_langrel_comf_engsign = c(,
+,"0 = ""No one"","
+,"1 = ""Some people"","
+,"2 = ""Most people"","
+,"3 = ""Anyone"""
+),
+"data$langrel_comf_engsign.factor = factor(data$langrel_comf_engsign, levels = names(mapping_langrel_comf_engsign), labels = mapping_langrel_comf_engsign)",
+,
+mapping_langrel_comf_written = c(,
+,"0 = ""No one"","
+,"1 = ""Some people"","
+,"2 = ""Most people"","
+,"3 = ""Anyone"""
+),
+"data$langrel_comf_written.factor = factor(data$langrel_comf_written, levels = names(mapping_langrel_comf_written), labels = mapping_langrel_comf_written)",
+,
+mapping_lang_use_news___asl = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$lang_use_news___asl.factor = factor(data$lang_use_news___asl, levels = names(mapping_lang_use_news___asl), labels = mapping_lang_use_news___asl)",
+,
+mapping_lang_use_news___eng = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$lang_use_news___eng.factor = factor(data$lang_use_news___eng, levels = names(mapping_lang_use_news___eng), labels = mapping_lang_use_news___eng)",
+,
+mapping_lang_use_news___oth = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$lang_use_news___oth.factor = factor(data$lang_use_news___oth, levels = names(mapping_lang_use_news___oth), labels = mapping_lang_use_news___oth)",
+,
+mapping_lang_use_news___no = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$lang_use_news___no.factor = factor(data$lang_use_news___no, levels = names(mapping_lang_use_news___no), labels = mapping_lang_use_news___no)",
+,
+mapping_blp_eng_asl2_page1_c79014_complete = c(,
+,"0 = ""Incomplete"","
+,"1 = ""Unverified"","
+,"2 = ""Complete"""
+),
+"data$blp_eng_asl2_page1_c79014_complete.factor = factor(data$blp_eng_asl2_page1_c79014_complete, levels = names(mapping_blp_eng_asl2_page1_c79014_complete), labels = mapping_blp_eng_asl2_page1_c79014_complete)",
+,
+mapping_blp_eng_asl2_complete = c(,
+,"0 = ""Incomplete"","
+,"1 = ""Unverified"","
+,"2 = ""Complete"""
+),
+"data$blp_eng_asl2_complete.factor = factor(data$blp_eng_asl2_complete, levels = names(mapping_blp_eng_asl2_complete), labels = mapping_blp_eng_asl2_complete)",
+,
+mapping_langhist_aoa_asl = c(,
+,"0 = ""birth to 2"","
+,"2 = ""2 to 4"","
+,"5 = ""5 to 7"","
+,"6 = ""8 to 10"","
+,"7 = ""11 to 19"","
+,"8 = ""20 to 30"","
+,FALSE
+),
+"data$langhist_aoa_asl.factor = factor(data$langhist_aoa_asl, levels = names(mapping_langhist_aoa_asl), labels = mapping_langhist_aoa_asl)",
+,
+mapping_langhist_aoa_eng = c(,
+,"0 = ""birth to 2"","
+,"2 = ""2 to 4"","
+,"5 = ""5 to 7"","
+,"6 = ""8 to 10"","
+,"7 = ""11 to 19"","
+,"8 = ""20 to 30"","
+,FALSE
+),
+"data$langhist_aoa_eng.factor = factor(data$langhist_aoa_eng, levels = names(mapping_langhist_aoa_eng), labels = mapping_langhist_aoa_eng)",
+,
+mapping_langhist_aoa_engsign = c(,
+,"0 = ""birth to 2"","
+,"2 = ""2 to 4"","
+,"5 = ""5 to 7"","
+,"6 = ""8 to 10"","
+,"7 = ""11 to 19"","
+,"8 = ""20 to 30"","
+,FALSE
+),
+"data$langhist_aoa_engsign.factor = factor(data$langhist_aoa_engsign, levels = names(mapping_langhist_aoa_engsign), labels = mapping_langhist_aoa_engsign)",
+,
+mapping_langhist_aoa_engreading = c(,
+,"0 = ""birth to 2"","
+,"2 = ""2 to 4"","
+,"5 = ""5 to 7"","
+,"6 = ""8 to 10"","
+,"7 = ""11 to 19"","
+,"8 = ""20 to 30"","
+,FALSE
+),
+"data$langhist_aoa_engreading.factor = factor(data$langhist_aoa_engreading, levels = names(mapping_langhist_aoa_engreading), labels = mapping_langhist_aoa_engreading)",
+,
+mapping_langhist_peers_asl_v2 = c(,
+,"0 = ""0"","
+,"1 = ""1"","
+,"2 = ""2"","
+,"3 = ""3"","
+,"4 = ""4"","
+,"5 = ""5"","
+,"6 = ""6"","
+,"7 = ""7"","
+,"8 = ""8"","
+,"9 = ""9"","
+,"10 = ""10"","
+,"11 = ""11"","
+,"12 = ""12"","
+,"13 = ""13"","
+,"14 = ""14"","
+,"15 = ""15"","
+,"16 = ""16"","
+,"17 = ""17"","
+,"18 = ""18"","
+,"19 = ""19"","
+,"20 = ""20+"""
+),
+"data$langhist_peers_asl_v2.factor = factor(data$langhist_peers_asl_v2, levels = names(mapping_langhist_peers_asl_v2), labels = mapping_langhist_peers_asl_v2)",
+,
+mapping_langhist_peers_eng_v2 = c(,
+,"0 = ""0"","
+,"1 = ""1"","
+,"2 = ""2"","
+,"3 = ""3"","
+,"4 = ""4"","
+,"5 = ""5"","
+,"6 = ""6"","
+,"7 = ""7"","
+,"8 = ""8"","
+,"9 = ""9"","
+,"10 = ""10"","
+,"11 = ""11"","
+,"12 = ""12"","
+,"13 = ""13"","
+,"14 = ""14"","
+,"15 = ""15"","
+,"16 = ""16"","
+,"17 = ""17"","
+,"18 = ""18"","
+,"19 = ""19"","
+,"20 = ""20+"""
+),
+"data$langhist_peers_eng_v2.factor = factor(data$langhist_peers_eng_v2, levels = names(mapping_langhist_peers_eng_v2), labels = mapping_langhist_peers_eng_v2)",
+,
+mapping_langhist_peers_engsign_v2 = c(,
+,"0 = ""0"","
+,"1 = ""1"","
+,"2 = ""2"","
+,"3 = ""3"","
+,"4 = ""4"","
+,"5 = ""5"","
+,"6 = ""6"","
+,"7 = ""7"","
+,"8 = ""8"","
+,"9 = ""9"","
+,"10 = ""10"","
+,"11 = ""11"","
+,"12 = ""12"","
+,"13 = ""13"","
+,"14 = ""14"","
+,"15 = ""15"","
+,"16 = ""16"","
+,"17 = ""17"","
+,"18 = ""18"","
+,"19 = ""19"","
+,"20 = ""20+"""
+),
+"data$langhist_peers_engsign_v2.factor = factor(data$langhist_peers_engsign_v2, levels = names(mapping_langhist_peers_engsign_v2), labels = mapping_langhist_peers_engsign_v2)",
+,
+mapping_langhist_fam_asl_v2 = c(,
+,"0 = ""0"","
+,"1 = ""1"","
+,"2 = ""2"","
+,"3 = ""3"","
+,"4 = ""4"","
+,"5 = ""5"","
+,"6 = ""6"","
+,"7 = ""7"","
+,"8 = ""8"","
+,"9 = ""9"","
+,"10 = ""10"","
+,"11 = ""11"","
+,"12 = ""12"","
+,"13 = ""13"","
+,"14 = ""14"","
+,"15 = ""15"","
+,"16 = ""16"","
+,"17 = ""17"","
+,"18 = ""18"","
+,"19 = ""19"","
+,"20 = ""20+"""
+),
+"data$langhist_fam_asl_v2.factor = factor(data$langhist_fam_asl_v2, levels = names(mapping_langhist_fam_asl_v2), labels = mapping_langhist_fam_asl_v2)",
+,
+mapping_langhist_fam_eng_v2 = c(,
+,"0 = ""0"","
+,"1 = ""1"","
+,"2 = ""2"","
+,"3 = ""3"","
+,"4 = ""4"","
+,"5 = ""5"","
+,"6 = ""6"","
+,"7 = ""7"","
+,"8 = ""8"","
+,"9 = ""9"","
+,"10 = ""10"","
+,"11 = ""11"","
+,"12 = ""12"","
+,"13 = ""13"","
+,"14 = ""14"","
+,"15 = ""15"","
+,"16 = ""16"","
+,"17 = ""17"","
+,"18 = ""18"","
+,"19 = ""19"","
+,"20 = ""20+"""
+),
+"data$langhist_fam_eng_v2.factor = factor(data$langhist_fam_eng_v2, levels = names(mapping_langhist_fam_eng_v2), labels = mapping_langhist_fam_eng_v2)",
+,
+mapping_langhist_fam_engsign_v2 = c(,
+,"0 = ""0"","
+,"1 = ""1"","
+,"2 = ""2"","
+,"3 = ""3"","
+,"4 = ""4"","
+,"5 = ""5"","
+,"6 = ""6"","
+,"7 = ""7"","
+,"8 = ""8"","
+,"9 = ""9"","
+,"10 = ""10"","
+,"11 = ""11"","
+,"12 = ""12"","
+,"13 = ""13"","
+,"14 = ""14"","
+,"15 = ""15"","
+,"16 = ""16"","
+,"17 = ""17"","
+,"18 = ""18"","
+,"19 = ""19"","
+,"20 = ""20+"""
+),
+"data$langhist_fam_engsign_v2.factor = factor(data$langhist_fam_engsign_v2, levels = names(mapping_langhist_fam_engsign_v2), labels = mapping_langhist_fam_engsign_v2)",
+,
+mapping_langhist_work_asl_v2 = c(,
+,"0 = ""0"","
+,"1 = ""1"","
+,"2 = ""2"","
+,"3 = ""3"","
+,"4 = ""4"","
+,"5 = ""5"","
+,"6 = ""6"","
+,"7 = ""7"","
+,"8 = ""8"","
+,"9 = ""9"","
+,"10 = ""10"","
+,"11 = ""11"","
+,"12 = ""12"","
+,"13 = ""13"","
+,"14 = ""14"","
+,"15 = ""15"","
+,"16 = ""16"","
+,"17 = ""17"","
+,"18 = ""18"","
+,"19 = ""19"","
+,"20 = ""20+"""
+),
+"data$langhist_work_asl_v2.factor = factor(data$langhist_work_asl_v2, levels = names(mapping_langhist_work_asl_v2), labels = mapping_langhist_work_asl_v2)",
+,
+mapping_langhist_work_eng_v2 = c(,
+,"0 = ""0"","
+,"1 = ""1"","
+,"2 = ""2"","
+,"3 = ""3"","
+,"4 = ""4"","
+,"5 = ""5"","
+,"6 = ""6"","
+,"7 = ""7"","
+,"8 = ""8"","
+,"9 = ""9"","
+,"10 = ""10"","
+,"11 = ""11"","
+,"12 = ""12"","
+,"13 = ""13"","
+,"14 = ""14"","
+,"15 = ""15"","
+,"16 = ""16"","
+,"17 = ""17"","
+,"18 = ""18"","
+,"19 = ""19"","
+,"20 = ""20+"""
+),
+"data$langhist_work_eng_v2.factor = factor(data$langhist_work_eng_v2, levels = names(mapping_langhist_work_eng_v2), labels = mapping_langhist_work_eng_v2)",
+,
+mapping_langhist_work_engsign_v2 = c(,
+,"0 = ""0"","
+,"1 = ""1"","
+,"2 = ""2"","
+,"3 = ""3"","
+,"4 = ""4"","
+,"5 = ""5"","
+,"6 = ""6"","
+,"7 = ""7"","
+,"8 = ""8"","
+,"9 = ""9"","
+,"10 = ""10"","
+,"11 = ""11"","
+,"12 = ""12"","
+,"13 = ""13"","
+,"14 = ""14"","
+,"15 = ""15"","
+,"16 = ""16"","
+,"17 = ""17"","
+,"18 = ""18"","
+,"19 = ""19"","
+,"20 = ""20+"""
+),
+"data$langhist_work_engsign_v2.factor = factor(data$langhist_work_engsign_v2, levels = names(mapping_langhist_work_engsign_v2), labels = mapping_langhist_work_engsign_v2)",
+,
+mapping_langprof_aslcomp_v2 = c(,
+,"1 = ""None"","
+,"2 = ""Basic"","
+,"3 = ""Conversational"","
+,"4 = ""Advanced"","
+,"5 = ""Fluent"""
+),
+"data$langprof_aslcomp_v2.factor = factor(data$langprof_aslcomp_v2, levels = names(mapping_langprof_aslcomp_v2), labels = mapping_langprof_aslcomp_v2)",
+,
+mapping_langprof_aslprod_v2 = c(,
+,"1 = ""None"","
+,"2 = ""Basic"","
+,"3 = ""Conversational"","
+,"4 = ""Advanced"","
+,"5 = ""Fluent"""
+),
+"data$langprof_aslprod_v2.factor = factor(data$langprof_aslprod_v2, levels = names(mapping_langprof_aslprod_v2), labels = mapping_langprof_aslprod_v2)",
+,
+mapping_langprof_engread_v2 = c(,
+,"1 = ""None"","
+,"2 = ""Basic"","
+,"3 = ""Conversational"","
+,"4 = ""Advanced"","
+,"5 = ""Fluent"""
+),
+"data$langprof_engread_v2.factor = factor(data$langprof_engread_v2, levels = names(mapping_langprof_engread_v2), labels = mapping_langprof_engread_v2)",
+,
+mapping_langprof_engwrite_v2 = c(,
+,"1 = ""None"","
+,"2 = ""Basic"","
+,"3 = ""Conversational"","
+,"4 = ""Advanced"","
+,"5 = ""Fluent"""
+),
+"data$langprof_engwrite_v2.factor = factor(data$langprof_engwrite_v2, levels = names(mapping_langprof_engwrite_v2), labels = mapping_langprof_engwrite_v2)",
+,
+mapping_langprof_engcomp_v2 = c(,
+,"1 = ""None"","
+,"2 = ""Basic"","
+,"3 = ""Conversational"","
+,"4 = ""Advanced"","
+,"5 = ""Fluent"""
+),
+"data$langprof_engcomp_v2.factor = factor(data$langprof_engcomp_v2, levels = names(mapping_langprof_engcomp_v2), labels = mapping_langprof_engcomp_v2)",
+,
+mapping_langprof_engprod_v2 = c(,
+,"1 = ""None"","
+,"2 = ""Basic"","
+,"3 = ""Conversational"","
+,"4 = ""Advanced"","
+,"5 = ""Fluent"""
+),
+"data$langprof_engprod_v2.factor = factor(data$langprof_engprod_v2, levels = names(mapping_langprof_engprod_v2), labels = mapping_langprof_engprod_v2)",
+,
+mapping_langpersp_feelasl = c(,
+,"1 = ""Strongly disagree"","
+,"2 = ""Disagree"","
+,"3 = ""Somewhat disagree"","
+,"4 = ""Neither disagree or agree"","
+,"5 = ""Somewhat agree"","
+,"6 = ""Agree"","
+,"7 = ""Strongly agree"","
+,FALSE
+),
+"data$langpersp_feelasl.factor = factor(data$langpersp_feelasl, levels = names(mapping_langpersp_feelasl), labels = mapping_langpersp_feelasl)",
+,
+mapping_langpersp_feeleng = c(,
+,"1 = ""Strongly disagree"","
+,"2 = ""Disagree"","
+,"3 = ""Somewhat disagree"","
+,"4 = ""Neither disagree or agree"","
+,"5 = ""Somewhat agree"","
+,"6 = ""Agree"","
+,"7 = ""Strongly agree"","
+,FALSE
+),
+"data$langpersp_feeleng.factor = factor(data$langpersp_feeleng, levels = names(mapping_langpersp_feeleng), labels = mapping_langpersp_feeleng)",
+,
+mapping_langpersp_deafculture = c(,
+,"1 = ""Strongly disagree"","
+,"2 = ""Disagree"","
+,"3 = ""Somewhat disagree"","
+,"4 = ""Neither disagree or agree"","
+,"5 = ""Somewhat agree"","
+,"6 = ""Agree"","
+,"7 = ""Strongly agree"","
+,FALSE
+),
+"data$langpersp_deafculture.factor = factor(data$langpersp_deafculture, levels = names(mapping_langpersp_deafculture), labels = mapping_langpersp_deafculture)",
+,
+mapping_langpersp_hearculture = c(,
+,"1 = ""Strongly disagree"","
+,"2 = ""Disagree"","
+,"3 = ""Somewhat disagree"","
+,"4 = ""Neither disagree or agree"","
+,"5 = ""Somewhat agree"","
+,"6 = ""Agree"","
+,"7 = ""Strongly agree"","
+,FALSE
+),
+"data$langpersp_hearculture.factor = factor(data$langpersp_hearculture, levels = names(mapping_langpersp_hearculture), labels = mapping_langpersp_hearculture)",
+,
+mapping_langpersp_fluasl = c(,
+,"1 = ""Strongly disagree"","
+,"2 = ""Disagree"","
+,"3 = ""Somewhat disagree"","
+,"4 = ""Neither disagree or agree"","
+,"5 = ""Somewhat agree"","
+,"6 = ""Agree"","
+,"7 = ""Strongly agree"","
+,FALSE
+),
+"data$langpersp_fluasl.factor = factor(data$langpersp_fluasl, levels = names(mapping_langpersp_fluasl), labels = mapping_langpersp_fluasl)",
+,
+mapping_langpersp_flueng = c(,
+,"1 = ""Strongly disagree"","
+,"2 = ""Disagree"","
+,"3 = ""Somewhat disagree"","
+,"4 = ""Neither disagree or agree"","
+,"5 = ""Somewhat agree"","
+,"6 = ""Agree"","
+,"7 = ""Strongly agree"","
+,FALSE
+),
+"data$langpersp_flueng.factor = factor(data$langpersp_flueng, levels = names(mapping_langpersp_flueng), labels = mapping_langpersp_flueng)",
+,
+mapping_langpersp_opress = c(,
+,"1 = ""Strongly disagree"","
+,"2 = ""Disagree"","
+,"3 = ""Somewhat disagree"","
+,"4 = ""Neither disagree or agree"","
+,"5 = ""Somewhat agree"","
+,"6 = ""Agree"","
+,"7 = ""Strongly agree"","
+,FALSE
+),
+"data$langpersp_opress.factor = factor(data$langpersp_opress, levels = names(mapping_langpersp_opress), labels = mapping_langpersp_opress)",
+,
+mapping_blp_eng_asl2_2_complete = c(,
+,"0 = ""Incomplete"","
+,"1 = ""Unverified"","
+,"2 = ""Complete"""
+),
+"data$blp_eng_asl2_2_complete.factor = factor(data$blp_eng_asl2_2_complete, levels = names(mapping_blp_eng_asl2_2_complete), labels = mapping_blp_eng_asl2_2_complete)",
+,
+mapping_vfs10_01 = c(,
+,"1 = ""Never/Almost Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always/Almost Always"""
+),
+"data$vfs10_01.factor = factor(data$vfs10_01, levels = names(mapping_vfs10_01), labels = mapping_vfs10_01)",
+,
+mapping_vfs10_02 = c(,
+,"1 = ""Never/Almost Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always/Almost Always"""
+),
+"data$vfs10_02.factor = factor(data$vfs10_02, levels = names(mapping_vfs10_02), labels = mapping_vfs10_02)",
+,
+mapping_vfs10_03 = c(,
+,"1 = ""Never/Almost Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always/Almost Always"""
+),
+"data$vfs10_03.factor = factor(data$vfs10_03, levels = names(mapping_vfs10_03), labels = mapping_vfs10_03)",
+,
+mapping_vfs10_04 = c(,
+,"1 = ""Never/Almost Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always/Almost Always"""
+),
+"data$vfs10_04.factor = factor(data$vfs10_04, levels = names(mapping_vfs10_04), labels = mapping_vfs10_04)",
+,
+mapping_vfs10_05 = c(,
+,"1 = ""Never/Almost Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always/Almost Always"""
+),
+"data$vfs10_05.factor = factor(data$vfs10_05, levels = names(mapping_vfs10_05), labels = mapping_vfs10_05)",
+,
+mapping_vfs10_06 = c(,
+,"1 = ""Never/Almost Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always/Almost Always"""
+),
+"data$vfs10_06.factor = factor(data$vfs10_06, levels = names(mapping_vfs10_06), labels = mapping_vfs10_06)",
+,
+mapping_vfs10_07 = c(,
+,"1 = ""Never/Almost Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always/Almost Always"""
+),
+"data$vfs10_07.factor = factor(data$vfs10_07, levels = names(mapping_vfs10_07), labels = mapping_vfs10_07)",
+,
+mapping_vfs10_08 = c(,
+,"1 = ""Never/Almost Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always/Almost Always"""
+),
+"data$vfs10_08.factor = factor(data$vfs10_08, levels = names(mapping_vfs10_08), labels = mapping_vfs10_08)",
+,
+mapping_vfs10_09 = c(,
+,"1 = ""Never/Almost Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always/Almost Always"""
+),
+"data$vfs10_09.factor = factor(data$vfs10_09, levels = names(mapping_vfs10_09), labels = mapping_vfs10_09)",
+,
+mapping_vfs10_10 = c(,
+,"1 = ""Never/Almost Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always/Almost Always"""
+),
+"data$vfs10_10.factor = factor(data$vfs10_10, levels = names(mapping_vfs10_10), labels = mapping_vfs10_10)",
+,
+mapping_vfs10_complete = c(,
+,"0 = ""Incomplete"","
+,"1 = ""Unverified"","
+,"2 = ""Complete"""
+),
+"data$vfs10_complete.factor = factor(data$vfs10_complete, levels = names(mapping_vfs10_complete), labels = mapping_vfs10_complete)",
+,
+mapping_fatexp18 = c(,
+,"1 = ""Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always"""
+),
+"data$fatexp18.factor = factor(data$fatexp18, levels = names(mapping_fatexp18), labels = mapping_fatexp18)",
+,
+mapping_fatexp20 = c(,
+,"1 = ""Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always"""
+),
+"data$fatexp20.factor = factor(data$fatexp20, levels = names(mapping_fatexp20), labels = mapping_fatexp20)",
+,
+mapping_fatexp42 = c(,
+,"1 = ""Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always"""
+),
+"data$fatexp42.factor = factor(data$fatexp42, levels = names(mapping_fatexp42), labels = mapping_fatexp42)",
+,
+mapping_fatimp13 = c(,
+,"1 = ""Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always"""
+),
+"data$fatimp13.factor = factor(data$fatimp13, levels = names(mapping_fatimp13), labels = mapping_fatimp13)",
+,
+mapping_fatexp48 = c(,
+,"1 = ""Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always"""
+),
+"data$fatexp48.factor = factor(data$fatexp48, levels = names(mapping_fatexp48), labels = mapping_fatexp48)",
+,
+mapping_fatimp26 = c(,
+,"1 = ""Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always"""
+),
+"data$fatimp26.factor = factor(data$fatimp26, levels = names(mapping_fatimp26), labels = mapping_fatimp26)",
+,
+mapping_fatimp56 = c(,
+,"1 = ""Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always"""
+),
+"data$fatimp56.factor = factor(data$fatimp56, levels = names(mapping_fatimp56), labels = mapping_fatimp56)",
+,
+mapping_fatimp53 = c(,
+,"1 = ""Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always"""
+),
+"data$fatimp53.factor = factor(data$fatimp53, levels = names(mapping_fatimp53), labels = mapping_fatimp53)",
+,
+mapping_fatexp26 = c(,
+,"1 = ""Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always"""
+),
+"data$fatexp26.factor = factor(data$fatexp26, levels = names(mapping_fatexp26), labels = mapping_fatexp26)",
+,
+mapping_trap2 = c(,
+,"1 = ""Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always"""
+),
+"data$trap2.factor = factor(data$trap2, levels = names(mapping_trap2), labels = mapping_trap2)",
+,
+mapping_fatimp25 = c(,
+,"1 = ""Never"","
+,"2 = ""Rarely"","
+,"3 = ""Sometimes"","
+,"4 = ""Often"","
+,"5 = ""Always"""
+),
+"data$fatimp25.factor = factor(data$fatimp25, levels = names(mapping_fatimp25), labels = mapping_fatimp25)",
+,
+mapping_elce03 = c(,
+,"0 = ""Not at all"","
+,"1 = ""A little bit"","
+,"2 = ""Somewhat"","
+,"3 = ""Quite a bit"","
+,"4 = ""Very much"""
+),
+"data$elce03.factor = factor(data$elce03, levels = names(mapping_elce03), labels = mapping_elce03)",
+,
+mapping_elce04 = c(,
+,"0 = ""Not at all"","
+,"1 = ""A little bit"","
+,"2 = ""Somewhat"","
+,"3 = ""Quite a bit"","
+,"4 = ""Very much"""
+),
+"data$elce04.factor = factor(data$elce04, levels = names(mapping_elce04), labels = mapping_elce04)",
+,
+mapping_elce05 = c(,
+,"0 = ""Not at all"","
+,"1 = ""A little bit"","
+,"2 = ""Somewhat"","
+,"3 = ""Quite a bit"","
+,"4 = ""Very much"""
+),
+"data$elce05.factor = factor(data$elce05, levels = names(mapping_elce05), labels = mapping_elce05)",
+,
+mapping_elce06 = c(,
+,"0 = ""Not at all"","
+,"1 = ""A little bit"","
+,"2 = ""Somewhat"","
+,"3 = ""Quite a bit"","
+,"4 = ""Very much"""
+),
+"data$elce06.factor = factor(data$elce06, levels = names(mapping_elce06), labels = mapping_elce06)",
+,
+mapping_promis_complete = c(,
+,"0 = ""Incomplete"","
+,"1 = ""Unverified"","
+,"2 = ""Complete"""
+),
+"data$promis_complete.factor = factor(data$promis_complete, levels = names(mapping_promis_complete), labels = mapping_promis_complete)",
+,
+mapping_comm03 = c(,
+,"0 = ""Not at all"","
+,"1 = ""A little bit"","
+,"2 = ""Somewhat"","
+,"3 = ""Quite a bit"","
+,"4 = ""Very much"","
+,FALSE
+),
+"data$comm03.factor = factor(data$comm03, levels = names(mapping_comm03), labels = mapping_comm03)",
+,
+mapping_comm07 = c(,
+,"0 = ""Not at all"","
+,"1 = ""A little bit"","
+,"2 = ""Somewhat"","
+,"3 = ""Quite a bit"","
+,"4 = ""Very much"","
+,FALSE
+),
+"data$comm07.factor = factor(data$comm07, levels = names(mapping_comm07), labels = mapping_comm07)",
+,
+mapping_comm13 = c(,
+,"0 = ""Not at all"","
+,"1 = ""A little bit"","
+,"2 = ""Somewhat"","
+,"3 = ""Quite a bit"","
+,"4 = ""Very much"","
+,FALSE
+),
+"data$comm13.factor = factor(data$comm13, levels = names(mapping_comm13), labels = mapping_comm13)",
+,
+mapping_comm15 = c(,
+,"0 = ""Not at all"","
+,"1 = ""A little bit"","
+,"2 = ""Somewhat"","
+,"3 = ""Quite a bit"","
+,"4 = ""Very much"","
+,FALSE
+),
+"data$comm15.factor = factor(data$comm15, levels = names(mapping_comm15), labels = mapping_comm15)",
+,
+mapping_comm16 = c(,
+,"0 = ""Not at all"","
+,"1 = ""A little bit"","
+,"2 = ""Somewhat"","
+,"3 = ""Quite a bit"","
+,"4 = ""Very much"","
+,FALSE
+),
+"data$comm16.factor = factor(data$comm16, levels = names(mapping_comm16), labels = mapping_comm16)",
+,
+mapping_comm17 = c(,
+,"0 = ""Not at all"","
+,"1 = ""A little bit"","
+,"2 = ""Somewhat"","
+,"3 = ""Quite a bit"","
+,"4 = ""Very much"","
+,FALSE
+),
+"data$comm17.factor = factor(data$comm17, levels = names(mapping_comm17), labels = mapping_comm17)",
+,
+mapping_comm18 = c(,
+,"0 = ""Not at all"","
+,"1 = ""A little bit"","
+,"2 = ""Somewhat"","
+,"3 = ""Quite a bit"","
+,"4 = ""Very much"","
+,FALSE
+),
+"data$comm18.factor = factor(data$comm18, levels = names(mapping_comm18), labels = mapping_comm18)",
+,
+mapping_comm19 = c(,
+,"0 = ""Not at all"","
+,"1 = ""A little bit"","
+,"2 = ""Somewhat"","
+,"3 = ""Quite a bit"","
+,"4 = ""Very much"","
+,FALSE
+),
+"data$comm19.factor = factor(data$comm19, levels = names(mapping_comm19), labels = mapping_comm19)",
+,
+mapping_promis_17b812_complete = c(,
+,"0 = ""Incomplete"","
+,"1 = ""Unverified"","
+,"2 = ""Complete"""
+),
+"data$promis_17b812_complete.factor = factor(data$promis_17b812_complete, levels = names(mapping_promis_17b812_complete), labels = mapping_promis_17b812_complete)",
+,
+mapping_payment_checkboxes___1 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$payment_checkboxes___1.factor = factor(data$payment_checkboxes___1, levels = names(mapping_payment_checkboxes___1), labels = mapping_payment_checkboxes___1)",
+,
+mapping_payment_checkboxes___2 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$payment_checkboxes___2.factor = factor(data$payment_checkboxes___2, levels = names(mapping_payment_checkboxes___2), labels = mapping_payment_checkboxes___2)",
+,
+mapping_payment_checkboxes___3 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$payment_checkboxes___3.factor = factor(data$payment_checkboxes___3, levels = names(mapping_payment_checkboxes___3), labels = mapping_payment_checkboxes___3)",
+,
+mapping_payment_checkboxes___4 = c(,
+,"0 = ""Unchecked"","
+,"1 = ""Checked"""
+),
+"data$payment_checkboxes___4.factor = factor(data$payment_checkboxes___4, levels = names(mapping_payment_checkboxes___4), labels = mapping_payment_checkboxes___4)",
+,
+mapping_payment_tracking_complete = c(,
+,"0 = ""Incomplete"","
+,"1 = ""Unverified"","
+,"2 = ""Complete"""
+),
+"data$payment_tracking_complete.factor = factor(data$payment_tracking_complete, levels = names(mapping_payment_tracking_complete), labels = mapping_payment_tracking_complete)",
